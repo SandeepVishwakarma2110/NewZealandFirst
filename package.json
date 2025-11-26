@@ -7,10 +7,10 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
     "dev": "nodemon server.js",
-    "build": "npm install --prefix client && npm run build --prefix client",
+    "build": "npm install --prefix Newzeland-Project && npm run build --prefix Newzeland-Project",
     "install-server": "npm install",
-    "install-client": "npm install --prefix client",
-    "postinstall": "npm run install-client && npm run build"
+    "install-Newzeland-Project": "npm install --prefix Newzeland-Project",
+    "postinstall": "npm run install-Newzeland-Project && npm run build"
   },
   "keywords": [],
   "author": "",
