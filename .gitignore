@@ -1,0 +1,19 @@
+
+
+
+Build output
+/Newzeland-Project/dist
+
+Environment variables
+.env
+
+data.txt
+
+IDE and OS files
+.vscode/
+.DS_Store
+*.log
+
+Newzeland-Project/node_modules
+node_modules/
+ 
