@@ -593,13 +593,13 @@ export default function SuperAdminTopics() {
                 {activeTab === "notes" && (
                   <div>
                     <h3 className="text-lg font-semibold mb-4 text-white">Notes & Resources</h3>
-                    {selected.notes ? (
-                      selected.notes.endsWith(".pdf") ? (
-                        <iframe src={`http://localhost:5000/uploads/${selected.notes}`} width="100%" height="500" title="PDF Viewer" />
-                      ) : selected.notes.match(/\.(docx?|pptx?|xlsx?)$/i) ? (
-                        <iframe src={`https://docs.google.com/gview?url=http://localhost:5000/uploads/${selected.notes}&embedded=true`} width="100%" height="500" title="Doc Viewer" />
+                    {selected.notes && selected.notes.filename ? (
+                      selected.notes.filename.toLowerCase().endsWith(".pdf") ? (
+                      <iframe src={`/api/topics/${selected._id}/notes`} width="100%" height="500" title="PDF Viewer" />
+                      ) : selected.notes.filename.match(/\.(docx?|pptx?|xlsx?)$/i) ? (
+                        <iframe src={`https://docs.google.com/gview?url=${window.location.origin}/api/topics/${selected._id}/notes&embedded=true`} width="100%" height="500" title="Doc Viewer" />
                       ) : (
-                        <a href={`http://localhost:5000/uploads/${selected.notes}`} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">Open Document</a>
+                        <a href={`/api/topics/${selected._id}/notes`} target="_blank" rel="noopener noreferrer">Open Document</a>
                       )
                     ) : (
                       <p className="text-gray-500">No notes uploaded.</p>

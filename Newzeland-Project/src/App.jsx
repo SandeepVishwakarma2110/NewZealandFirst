@@ -24,7 +24,7 @@ function AppContent() {
   const location = useLocation();
 
   // pages where bottom navbar should NOT appear
-  const hideBottomNav = ["/login", "/register"].includes(location.pathname);
+  const hideBottomNav = ["/","/login", "/register"].includes(location.pathname);
 
   return (
     <>

@@ -98,7 +98,7 @@ export default function Profile() {
         ${darkMode ? "bg-[#1b1d1f] text-gray-200 border-gray-700" : "bg-white text-gray-700"}
       `}
     >
-      🌙 Dark Mode
+      {darkMode ? "☀️ Light Mode" : "🌙 Dark Mode"}
     </button>
   </div>
 

@@ -93,19 +93,17 @@ export default function Login() {
         }`}
       >
          <div className="absolute top-4 right-4">
+           <button
+              onClick={() =>  navigate("/register")}
+              className="text-sm px-3 py-1 border rounded  bg-red-500 hover:bg-red-600 text-white"
+            >
+             Send Request
+            </button>
             <button
               onClick={() => setDarkMode(!darkMode)}
               className="text-sm px-3 py-1 border rounded hover:bg-gray-200 dark:hover:bg-gray-700"
             >
               {darkMode ? "☀️ Light Mode" : "🌙 Dark Mode"}
-            </button>
-          </div>
-           <div className="absolute top-4 right-2">
-            <button
-              onClick={() =>  navigate("/register")}
-              className="text-sm px-3 py-1 border rounded  bg-red-500 hover:bg-red-600 text-white"
-            >
-             Send Request
             </button>
           </div>
         <div className="w-full max-w-sm">
