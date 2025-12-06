@@ -24,7 +24,7 @@ app.use('/', apiApp);
 app.use(express.static(path.join(__dirname, 'Newzeland-Project', 'dist')));
 
 // SPA route fallback (Uncomment if serving a single-page application)
-app.get('/', (req, res) => {
+app.get('/{*any}', (req, res) => {
     res.sendFile(path.join(__dirname, 'Newzeland-Project', 'dist', 'index.html'));
 });
  
