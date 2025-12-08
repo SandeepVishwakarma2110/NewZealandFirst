@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const topicSchema = new mongoose.Schema({
   title: { type: String, required: true },
   key: { type: String, required: true },
-  background: { type: String, required: true },
+  background: { type: String, required: false, default: "" },
   notes: {
     data: Buffer, // for binary PDF/doc files
     contentType: String, // e.g. 'application/pdf'

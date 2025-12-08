@@ -38,7 +38,7 @@ function AppContent() {
         <Route
           path="/admin"
           element={
-            <PrivateRoute allowedRoles={[0, 1]}>
+            <PrivateRoute allowedRoles={[0]}>
               <AdminDashboard />
             </PrivateRoute>
           }
@@ -47,7 +47,7 @@ function AppContent() {
         <Route
           path="/main"
           element={
-            <PrivateRoute allowedRoles={[0]}>
+            <PrivateRoute allowedRoles={[0, 1]}>
               <SuperAdminTopics />
             </PrivateRoute>
           }

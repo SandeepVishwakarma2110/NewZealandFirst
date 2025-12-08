@@ -231,7 +231,17 @@ exports.createApp = () => {
             res.status(500).json({ message: 'Server error' });
         }
     });
-
+    
+    // Delete a user (admin only)
+    app.delete('/api/admin/users/:id', auth([0, 1]), async (req, res) => {
+    try {
+        const user = await RegisterRequest.findByIdAndDelete(req.params.id);
+        if (!user) return res.status(404).json({ message: 'User not found' });
+        res.json({ message: 'User deleted' });
+    } catch (err) {
+        res.status(500).json({ message: 'Server error' });
+    }
+});
 
     // Get all users for admin management
     app.get('/api/admin/users', auth([0, 1]), async (req, res) => {
@@ -247,6 +257,37 @@ exports.createApp = () => {
     // --- Topic/Document Routes ---
 
     // Create topic
+    // app.post('/api/topics', auth([0,1]), upload.single('notes'), async (req, res) => {
+    //     try {
+    //         const { title, key, background } = req.body;
+    //         const topic = new Topic({
+    //   title,
+    //   key,
+    //   background,
+    //   notes: req.file
+    //     ? {
+    //         data: req.file.buffer,
+    //         contentType: req.file.mimetype,
+    //         filename: req.file.originalname
+    //       }
+    //     : undefined,
+    //   createdBy: req.user.id
+    // });
+    //         await topic.save();
+
+    //         const level2Users = await RegisterRequest.find({ role: 2, status: 'approved' });
+    //         const emails = level2Users.map(u => u.email);
+    //         await sendEmail({
+    //             to: emails,
+    //             subject: 'New Document Added',
+    //             text: `A new document "${req.body.title}" has been added to the website.`
+    //         });
+    //         res.status(201).json({ message: 'Topic created', topic });
+    //     } catch (err) {
+    //         console.error(err);
+    //         res.status(500).json({ message: 'Server error' });
+    //     }
+    // });
     app.post('/api/topics', auth([0,1]), upload.single('notes'), async (req, res) => {
         try {
             const { title, key, background } = req.body;
@@ -265,13 +306,16 @@ exports.createApp = () => {
     });
             await topic.save();
 
-            const level2Users = await RegisterRequest.find({ role: 2, status: 'approved' });
-            const emails = level2Users.map(u => u.email);
-            await sendEmail({
-                to: emails,
-                subject: 'New Document Added',
-                text: `A new document "${req.body.title}" has been added to the website.`
-            });
+           const level2Users = await RegisterRequest.find({ role: 2, status: 'approved' });
+const emails = level2Users.map(u => u.email).filter(Boolean); // filter out any empty emails
+
+if (emails.length > 0) {
+  await sendEmail({
+    to: emails,
+    subject: 'New Document Added',
+    text: `A new document "${req.body.title}" has been added to the website.`
+  });
+}
             res.status(201).json({ message: 'Topic created', topic });
         } catch (err) {
             console.error(err);
