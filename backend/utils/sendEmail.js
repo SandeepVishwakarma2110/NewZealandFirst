@@ -18,20 +18,20 @@
 // };
 
 
-require('dotenv').config(); // Load environment variables
+require('dotenv').config(); 
 const nodemailer = require('nodemailer');
 
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: process.env.EMAIL_USER, // Fetched from .env
-    pass: process.env.EMAIL_PASS  // Fetched from .env
+    user: process.env.EMAIL_USER, 
+    pass: process.env.EMAIL_PASS  
   }
 });
 
 module.exports = async function sendEmail({ to, subject, text }) {
   await transporter.sendMail({
-    from: `"NZ Project" <${process.env.EMAIL_USER}>`, // Using the env var here is also good practice
+    from: `"NZ Project" <${process.env.EMAIL_USER}>`, 
     to,
     subject,
     text
