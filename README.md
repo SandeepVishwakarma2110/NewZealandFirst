@@ -1,2 +1,0 @@
-# Newzeland-Project
-Newzeland-Project
