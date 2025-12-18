@@ -92,7 +92,7 @@ export default function Login() {
           darkMode ? "bg-gray-800" : "bg-white"
         }`}
       >
-         <div className="absolute top-4 right-4">
+         <div className="absolute top-4 right-4 mb-2">
            <button
               onClick={() =>  navigate("/register")}
               className="text-sm px-3 py-1 border rounded  bg-red-500 hover:bg-red-600 text-white"
@@ -110,7 +110,7 @@ export default function Login() {
           {/* Theme Toggle */}
           
 
-          <h2 className="text-2xl font-bold mb-2">Sign in to your account</h2>
+          <h2 className="text-2xl font-bold mb-2 mt-3">Sign in to your account</h2>
           <p className="text-sm mb-6 text-gray-500 dark:text-gray-400">
             Welcome back! Please enter your credentials.
           </p>
@@ -123,7 +123,7 @@ export default function Login() {
                 placeholder="Username or Email"
                 value={form.email}
                 onChange={handleChange}
-                className="w-full border p-3 rounded-md bg-transparent dark:bg-gray-700 dark:border-gray-600"
+                className="w-full border p-3 rounded-md bg-transparent dark:bg-gray-700 dark:border-gray-600 text-white "
                 required
               />
             </div>
@@ -135,7 +135,7 @@ export default function Login() {
                 placeholder="Password"
                 value={form.password}
                 onChange={handleChange}
-                className="w-full border p-3 rounded-md bg-transparent dark:bg-gray-700 dark:border-gray-600"
+                className="w-full border p-3 rounded-md bg-transparent dark:bg-gray-700 dark:border-gray-600 text-white"
                 required
               />
             </div>
@@ -149,7 +149,7 @@ export default function Login() {
 
             <button
               type="submit"
-              className="w-full bg-red-600 hover:bg-red-700 text-white p-3 rounded-md transition"
+              className="w-full bg-red-600 hover:bg-red-700 text-white p-3 rounded-md transform transition duration-200 active:scale-95"
             >
               Continue
             </button>

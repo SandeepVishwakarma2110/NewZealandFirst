@@ -64,7 +64,7 @@ export default function ViewTopics() {
   const loggedUserId =
     userRaw._id || userRaw.id || userRaw.userId || null; // VALID USER ID
 
-  console.log("LOGGED USER ID →", loggedUserId);
+  //console.log("LOGGED USER ID →", loggedUserId);
 
   // ---------------------------------------------------
   // FETCH TOPICS
