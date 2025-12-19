@@ -9,6 +9,8 @@ import Login from './pages/Login';
 import AdminDashboard from './pages/AdminDashboard';
 import Welcome from './pages/Welcome';
 import BottomNavbar from './components/BottomNavbar';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 
 function PrivateRoute({ children, allowedRoles }) {
   const token = localStorage.getItem('token');
@@ -34,6 +36,8 @@ function AppContent() {
         <Route path="/welcome" element={<Welcome />} />
         <Route path="/view-topics" element={<ViewTopics />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
 
         <Route
           path="/admin"

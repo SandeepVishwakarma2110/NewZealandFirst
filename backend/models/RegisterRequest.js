@@ -9,7 +9,9 @@ const registerRequestSchema = new mongoose.Schema({
   lastLogin: { type: Date },
   phone: { type: String },
   address: { type: String },
-  createdAt: { type: Date, default: Date.now }
+  createdAt: { type: Date, default: Date.now },
+  resetPasswordToken: { type: String },
+  resetPasswordExpires: { type: Date }
 });
 
 module.exports = mongoose.model('RegisterRequest', registerRequestSchema);

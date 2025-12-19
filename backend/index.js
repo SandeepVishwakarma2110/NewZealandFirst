@@ -29,13 +29,16 @@ const connectDB = () => {
       .catch(err => console.log('MongoDB error:', err));
 };
 
-
-
+// Password reset routes
+    
 const upload = multer();
 
 // The main function to create and configure the Express app/router
 exports.createApp = () => {
     const app = express.Router(); // Using Router to make it a modular sub-application
+
+
+  
 
     // Connect to the database when the app is created
     connectDB();
@@ -53,8 +56,12 @@ exports.createApp = () => {
     // Authentication Middleware alias
     const requireAuth = auth([0, 1, 2]);
 
-    // --- Authentication Routes ---
 
+    const authRoutes = require('./routes/auth');
+    app.use('/api/auth', authRoutes);
+
+    // --- Authentication Routes ---
+  
     // Register request route
     app.post('/api/register-request', async (req, res) => {
         const { name, email, password, role } = req.body;
@@ -255,39 +262,6 @@ exports.createApp = () => {
     });
 
     // --- Topic/Document Routes ---
-
-    // Create topic
-    // app.post('/api/topics', auth([0,1]), upload.single('notes'), async (req, res) => {
-    //     try {
-    //         const { title, key, background } = req.body;
-    //         const topic = new Topic({
-    //   title,
-    //   key,
-    //   background,
-    //   notes: req.file
-    //     ? {
-    //         data: req.file.buffer,
-    //         contentType: req.file.mimetype,
-    //         filename: req.file.originalname
-    //       }
-    //     : undefined,
-    //   createdBy: req.user.id
-    // });
-    //         await topic.save();
-
-    //         const level2Users = await RegisterRequest.find({ role: 2, status: 'approved' });
-    //         const emails = level2Users.map(u => u.email);
-    //         await sendEmail({
-    //             to: emails,
-    //             subject: 'New Document Added',
-    //             text: `A new document "${req.body.title}" has been added to the website.`
-    //         });
-    //         res.status(201).json({ message: 'Topic created', topic });
-    //     } catch (err) {
-    //         console.error(err);
-    //         res.status(500).json({ message: 'Server error' });
-    //     }
-    // });
     app.post('/api/topics', auth([0,1]), upload.single('notes'), async (req, res) => {
         try {
             const { title, key, background } = req.body;

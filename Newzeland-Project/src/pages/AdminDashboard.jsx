@@ -916,7 +916,7 @@ export default function AdminDashboard() {
               <input
                 type="text"
                 placeholder="Name"
-                className="border-gray-500 p-2 rounded flex-1 bg-gray-500 placeholder:text-white"
+                className="border-gray-500 p-2 rounded flex-1 bg-gray-500 placeholder:text-white text-white"
                 value={newUser.name}
                 onChange={(e) =>
                   setNewUser((prev) => ({ ...prev, name: e.target.value }))
@@ -925,7 +925,7 @@ export default function AdminDashboard() {
               <input
                 type="email"
                 placeholder="Email"
-                className="border-gray-500 p-2 rounded flex-1 bg-gray-500 placeholder:text-white"
+                className="border-gray-500 p-2 rounded flex-1 bg-gray-500 placeholder:text-white text-white"
                 value={newUser.email}
                 onChange={(e) =>
                   setNewUser((prev) => ({ ...prev, email: e.target.value }))
@@ -934,7 +934,7 @@ export default function AdminDashboard() {
               <input
                 type="password"
                 placeholder="Password"
-                className="border-gray-500 p-2 rounded flex-1 bg-gray-500 placeholder:text-white"
+                className="border-gray-500 p-2 rounded flex-1 bg-gray-500 placeholder:text-white text-white"
                 value={newUser.password}
                 onChange={(e) =>
                   setNewUser((prev) => ({ ...prev, password: e.target.value }))

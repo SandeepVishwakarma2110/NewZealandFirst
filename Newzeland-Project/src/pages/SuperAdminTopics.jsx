@@ -4,6 +4,7 @@ import { timeAgo } from "../utils/timeAgo";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import { Moon, Sun } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export default function SuperAdminTopics() {
   const [topics, setTopics] = useState([]);
@@ -452,7 +453,7 @@ export default function SuperAdminTopics() {
               <div className="flex flex-col lg:flex-row lg:items-center justify-between mb-4">
                 <div>
                   <div className="text-sm text-blue-600 mb-2">
-                    Home / Topics / <span className={darkMode ? "text-white" : "text-gray-700"}>{selected.title}</span>
+                    <Link to="/welcome" className="hover:underline">Home</Link> / <Link to="/view-topics" className="hover:underline">Topics</Link> / <span className={darkMode ? "text-white" : "text-gray-700"}>{selected.title}</span>
                   </div>
                   <h1 className="text-2xl lg:text-3xl font-bold">{selected.title}</h1>
                 </div>
@@ -645,14 +646,14 @@ export default function SuperAdminTopics() {
                       type="text"
                       value={form.title}
                       onChange={(e) => setForm({ ...form, title: e.target.value })}
-                      className="w-full border p-3 rounded mb-4 text-lg bg-blue-200 text-gray-700"
+                      className="w-full border p-3 rounded mb-4 text-lg bg-blue-200 text-gray-900"
                     />
 
                     <h3 className="font-semibold mb-2 text-white">Key Messages</h3>
                     <textarea
                       value={form.key}
                       onChange={(e) => setForm({ ...form, key: e.target.value })}
-                      className="w-full border p-3 rounded text-lg min-h-[150px] bg-blue-200 text-gray-700"
+                      className="w-full border p-3 rounded text-lg min-h-[150px] bg-blue-200 text-gray-900"
                     />
                   </div>
                 )}
@@ -663,7 +664,7 @@ export default function SuperAdminTopics() {
                     <textarea
                       value={form.background}
                       onChange={(e) => setForm({ ...form, background: e.target.value })}
-                      className="w-full border p-3 rounded text-lg min-h-[250px] bg-blue-200 text-gray-700"
+                      className="w-full border p-3 rounded text-lg min-h-[250px] bg-blue-200 text-gray-900"
                     />
                   </div>
                 )}
@@ -726,14 +727,14 @@ export default function SuperAdminTopics() {
                       type="text"
                       value={form.title}
                       onChange={(e) => setForm({ ...form, title: e.target.value })}
-                      className="w-full border p-3 rounded mb-4 text-lg bg-blue-200 text-gray-700"
+                      className="w-full border p-3 rounded mb-4 text-lg bg-blue-200 text-gray-900"
                     />
 
                     <h3 className="font-semibold mb-2 text-white">Key Messages</h3>
                     <textarea
                       value={form.key}
                       onChange={(e) => setForm({ ...form, key: e.target.value })}
-                      className="w-full border p-3 rounded text-lg min-h-[150px] bg-blue-200 text-gray-700"
+                      className="w-full border p-3 rounded text-lg min-h-[150px] bg-blue-200 text-gray-900"
                     />
                   </div>
                 )}
@@ -744,7 +745,7 @@ export default function SuperAdminTopics() {
                     <textarea
                       value={form.background}
                       onChange={(e) => setForm({ ...form, background: e.target.value })}
-                      className="w-full border p-3 rounded text-lg min-h-[250px] bg-blue-200 text-gray-700"
+                      className="w-full border p-3 rounded text-lg min-h-[250px] bg-blue-200 text-gray-900"
                     />
                   </div>
                 )}

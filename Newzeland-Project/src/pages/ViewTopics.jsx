@@ -5,6 +5,7 @@ import html2canvas from "html2canvas";
 import { timeAgo } from "../utils/timeAgo";
 import { useLocation } from "react-router-dom";
 import { Moon, Sun } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export default function ViewTopics() {
   const location = useLocation();
@@ -397,9 +398,10 @@ export default function ViewTopics() {
           className="flex-1 p-4 sm:p-6 lg:p-10 max-w-[1400px] mx-auto"
         >
           {/* BREADCRUMB */}
-          {selected && (
+
+          <div className="flex flex-row justify-between">{selected && (
             <div className="text-sm text-blue-400 mb-2">
-              Home / Topics / <span className="text-blue-600">{selected.title}</span>
+              <Link to="/welcome" className="hover:underline">Home</Link> / <Link to="/view-topics" className="hover:underline">Topics</Link> / <span className="text-blue-600">{selected.title}</span>
             </div>
           )}
 
@@ -408,12 +410,13 @@ export default function ViewTopics() {
           --------------------------------------------------- */}
           <button
             onClick={() => setDarkMode(!darkMode)}
-            className="flex items-center gap-2 px-4 py-2 rounded-full border 
+            className="flex items-center gap-2 px-4 py-2 rounded-full border mb-4
                                         hover:bg-gray-200 dark:hover:bg-gray-700 transition self-end"
           >
             {darkMode ? <Sun size={18} /> : <Moon size={18} />}
             <span>{darkMode ? "Light Mode" : "Dark Mode"}</span>
-          </button>
+          </button></div>
+          
           {selected && (
             <>
               <div className="flex flex-col lg:flex-row justify-between mb-4">

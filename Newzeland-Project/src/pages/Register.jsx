@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { Eye, EyeOff } from "lucide-react";
 export default function Register() {
   const [form, setForm] = useState({ name: "", email: "", password: "" });
   const [message, setMessage] = useState("");
   const [darkMode, setDarkMode] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -27,9 +29,8 @@ export default function Register() {
 
   return (
     <div
-      className={`flex flex-col md:flex-row min-h-screen transition-colors duration-500 ${
-        darkMode ? "bg-gray-900 text-white" : "bg-gray-100 text-gray-900"
-      }`}
+      className={`flex flex-col md:flex-row min-h-screen transition-colors duration-500 ${darkMode ? "bg-gray-900 text-white" : "bg-gray-100 text-gray-900"
+        }`}
     >
       {/* ---------- Left Section ---------- */}
       <div className="flex-1 flex flex-col justify-center items-center bg-[#1a1a1a] text-white p-10">
@@ -80,22 +81,21 @@ export default function Register() {
 
       {/* ---------- Right Section ---------- */}
       <div
-        className={`flex-1 flex justify-center items-center p-8 md:p-16 relative ${
-          darkMode ? "bg-gray-800" : "bg-white"
-        }`}
+        className={`flex-1 flex justify-center items-center p-8 md:p-16 relative ${darkMode ? "bg-gray-800" : "bg-white"
+          }`}
       >
 
-          <div className="absolute top-4 right-4">
-            <button
-              onClick={() => setDarkMode(!darkMode)}
-              className="text-sm px-3 py-1 border rounded hover:bg-gray-200 dark:hover:bg-gray-700"
-            >
-              {darkMode ? "☀️ Light Mode" : "🌙 Dark Mode"}
-            </button>
-          </div>
+        <div className="absolute top-4 right-4">
+          <button
+            onClick={() => setDarkMode(!darkMode)}
+            className="text-sm px-3 py-1 border rounded hover:bg-gray-200 dark:hover:bg-gray-700"
+          >
+            {darkMode ? "☀️ Light Mode" : "🌙 Dark Mode"}
+          </button>
+        </div>
         <div className="w-full max-w-sm">
           {/* Theme Toggle */}
-         
+
 
           <h2 className="text-2xl font-bold mb-2">Register Request</h2>
           <p className="text-sm mb-6 text-gray-500 dark:text-gray-400">
@@ -121,7 +121,7 @@ export default function Register() {
               className="w-full border p-3 rounded-md bg-transparent dark:bg-gray-700 dark:border-gray-600 text-white"
               required
             />
-            <input
+            {/* <input
               type="password"
               name="password"
               placeholder="Password"
@@ -129,8 +129,32 @@ export default function Register() {
               onChange={handleChange}
               className="w-full border p-3 rounded-md bg-transparent dark:bg-gray-700 dark:border-gray-600 text-white"
               required
-            />
+            /> */}
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                name="password"
+                placeholder="Password"
+                value={form.password}
+                onChange={handleChange}
+                autoComplete="new-password"
+                autoCorrect="off"
+                autoCapitalize="none"
+                spellCheck={false}
+                data-lpignore="true"
+                className="w-full border p-3 rounded-md bg-transparent dark:bg-gray-700 dark:border-gray-600 pr-10"
+                required
+              />
 
+
+              {/* Eye Icon (always visible) */}
+              <span
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer text-gray-400 select-none"
+              >
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </span>
+            </div>
             <button
               type="submit"
               className="w-full bg-red-600 hover:bg-red-700 text-white p-3 rounded-md transform transition duration-200 active:scale-95"
