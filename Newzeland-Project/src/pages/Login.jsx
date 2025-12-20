@@ -95,7 +95,7 @@ export default function Login() {
         <div className="absolute top-4 right-4 mb-2">
           <button
             onClick={() => navigate("/register")}
-            className="text-sm px-3 py-1 border rounded  bg-red-500 hover:bg-red-600 text-white"
+            className="text-sm px-3 py-1 border rounded  bg-red-500 hover:bg-red-600 text-white transform transition duration-100 active:scale-97"
           >
             Send Request
           </button>
@@ -164,7 +164,7 @@ export default function Login() {
 
             <button
               type="submit"
-              className="w-full bg-red-600 hover:bg-red-700 text-white p-3 rounded-md transform transition duration-200 active:scale-95"
+              className="w-full bg-red-600 hover:bg-red-700 text-white p-3 rounded-md transform transition duration-100 active:scale-97"
             >
               Continue
             </button>

@@ -5,6 +5,7 @@ import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import { Moon, Sun } from "lucide-react";
 import { Link } from "react-router-dom";
+import Linkify from "linkify-react";
 
 export default function SuperAdminTopics() {
   const [topics, setTopics] = useState([]);
@@ -256,7 +257,7 @@ export default function SuperAdminTopics() {
           {/* Left buttons */}
           <div className="flex items-center gap-3">
             <button
-              className="bg-blue-600 text-white px-3 py-1 rounded"
+              className="bg-blue-600 text-white px-3 py-1 rounded transform transition duration-100 active:scale-97"
               onClick={() => {
                 setActiveSection("add");
                 setSelected(null);
@@ -267,7 +268,7 @@ export default function SuperAdminTopics() {
               Add Topic
             </button>
             <button
-              className="bg-green-600 text-white px-3 py-1 rounded"
+              className="bg-green-600 text-white px-3 py-1 rounded transform transition duration-100 active:scale-97"
               onClick={() => {
                 setActiveSection("view");
                 setActiveTab("key");
@@ -276,7 +277,7 @@ export default function SuperAdminTopics() {
               View Topics
             </button>
             <button
-              className="bg-yellow-400 text-black px-3 py-1 rounded"
+              className="bg-yellow-400 text-black px-3 py-1 rounded transform transition duration-100 active:scale-97"
               onClick={() => {
                 if (selected) setActiveSection("edit");
               }}
@@ -358,7 +359,7 @@ export default function SuperAdminTopics() {
             <div className="flex flex-col gap-2">
 
               <button
-                className="w-full text-left bg-blue-600 text-white px-3 py-2 rounded"
+                className="w-full text-left bg-blue-600 text-white px-3 py-2 rounded transform transition duration-100 active:scale-97"
                 onClick={() => {
                   setActiveSection("add");
                   setMenuOpen(false);
@@ -368,7 +369,7 @@ export default function SuperAdminTopics() {
               </button>
 
               <button
-                className="w-full text-left bg-green-600 text-white px-3 py-2 rounded"
+                className="w-full text-left bg-green-600 text-white px-3 py-2 rounded transform transition duration-100 active:scale-97"
                 onClick={() => {
                   setActiveSection("view");
                   setActiveTab("key");
@@ -379,7 +380,7 @@ export default function SuperAdminTopics() {
               </button>
 
               <button
-                className="w-full text-left bg-yellow-400 text-black px-3 py-2 rounded"
+                className="w-full text-left bg-yellow-400 text-black px-3 py-2 rounded transform transition duration-100 active:scale-97"
                 onClick={() => {
                   if (selected) setActiveSection("edit");
                   setMenuOpen(false);
@@ -475,18 +476,18 @@ export default function SuperAdminTopics() {
               {/* Metadata + action buttons */}
               <div className="flex flex-col lg:flex-row lg:items-center justify-between bg-gray-700 p-4 rounded shadow mb-6">
                 <div className="flex items-center gap-3">
-                  <button onClick={exportTopicPDF} className="bg-blue-600   px-3 py-1 rounded text-white flex flex-row">
+                  <button onClick={exportTopicPDF} className="bg-blue-600   px-3 py-1 rounded text-white flex flex-row transform transition duration-100 active:scale-97">
                     <svg width="22" height="22" fill="currentColor">
                       <path d="M11 2l4 4h-3v6h-2V6H7l4-4zm-7 12h2v4h10v-4h2v6H4v-6z" />
                     </svg>
                     Export</button>
-                  <button onClick={emailTopic} className="bg-yellow-400   px-3 py-1 rounded text-white flex flex-row">
+                  <button onClick={emailTopic} className="bg-yellow-400   px-3 py-1 rounded text-white flex flex-row transform transition duration-100 active:scale-97">
                     <svg width="22" height="22" fill="currentColor">
                       <path d="M2 5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5zm16 0H4l7 5 7-5zm0 12V8l-7 5-7-5v9h14z" />
                     </svg>
 
                     Email</button>
-                  <button onClick={handlePrint} className="bg-red-800  px-3 py-1 rounded text-white flex flex-row">
+                  <button onClick={handlePrint} className="bg-red-800  px-3 py-1 rounded text-white flex flex-row transform transition duration-100 active:scale-97">
                     <svg width="22" height="22" fill="currentColor">
                       <path d="M6 3h10v4H6V3zm-2 6h14a2 2 0 0 1 2 2v5h-4v-3H6v3H2v-5a2 2 0 0 1 2-2zm4 9h8v-4H8v4z" />
                     </svg>
@@ -570,21 +571,56 @@ export default function SuperAdminTopics() {
                 {activeTab === "key" && (
                   <div>
                     <h3 className="text-lg font-semibold mb-4 text-white">Core Messages</h3>
-                    <div className="space-y-4">
+
+                    {/* <div className="space-y-4">
                       {parseCoreMessages(selected.key).map((msg, idx) => (
                         <div key={idx} className="p-4 border rounded bg-blue-300">
                           <div className="text-sm text-blue-600 font-semibold mb-2"> {idx + 1}. </div>
                           <div className="text-sm whitespace-pre-line text-white font-semibold">{msg}</div>
                         </div>
                       ))}
+                    </div> */}
+                    <div className="space-y-4">
+                      {parseCoreMessages(selected.key).map((msg, idx) => (
+                        <div key={idx} className="p-4 border rounded bg-blue-300">
+
+                          <div className="text-sm text-blue-600 font-semibold mb-2">
+                            {idx + 1}.
+                          </div>
+
+                          <div className="text-sm whitespace-pre-line text-gray-900 font-semibold">
+                            <Linkify
+                              options={{
+                                target: "_blank",
+                                className: "text-blue-800 underline",
+                              }}
+                            >
+                              {msg}
+                            </Linkify>
+                          </div>
+
+                        </div>
+                      ))}
                     </div>
+
+
                   </div>
                 )}
 
                 {activeTab === "background" && (
                   <div>
                     <h3 className="text-lg font-semibold mb-4 text-white">Background</h3>
-                    <div className="prose max-w-none whitespace-pre-line text-white">{selected.background}</div>
+                    {/* <div className="prose max-w-none whitespace-pre-line text-white">{selected.background}</div> */}
+                    <div className="prose max-w-none whitespace-pre-line text-white ">
+                      <Linkify
+                        options={{
+                          target: "_blank",
+                          className: "text-blue-800 underline",
+                        }}
+                      >
+                        {selected.background}
+                      </Linkify>
+                    </div>
                   </div>
                 )}
 
@@ -649,12 +685,37 @@ export default function SuperAdminTopics() {
                       className="w-full border p-3 rounded mb-4 text-lg bg-blue-200 text-gray-900"
                     />
 
+                    {/* <h3 className="font-semibold mb-2 text-white">Key Messages</h3>
+                    <textarea
+                      value={form.key}
+                      onChange={(e) => setForm({ ...form, key: e.target.value })}
+                      className="w-full border p-3 rounded text-lg min-h-[150px] bg-blue-200 text-gray-900"
+                    /> 
+                    */}
+
+
                     <h3 className="font-semibold mb-2 text-white">Key Messages</h3>
+
                     <textarea
                       value={form.key}
                       onChange={(e) => setForm({ ...form, key: e.target.value })}
                       className="w-full border p-3 rounded text-lg min-h-[150px] bg-blue-200 text-gray-900"
                     />
+
+                    {/* Live Preview */}
+                    <div className="mt-4 p-3 rounded bg-blue-100 text-gray-900">
+                      <h4 className="font-semibold mb-2">Preview</h4>
+                      <Linkify
+                        options={{
+                          target: "_blank",
+                          className: "text-blue-600 underline",
+                        }}
+                      >
+                        {form.key}
+                      </Linkify>
+                    </div>
+
+
                   </div>
                 )}
 
@@ -666,6 +727,18 @@ export default function SuperAdminTopics() {
                       onChange={(e) => setForm({ ...form, background: e.target.value })}
                       className="w-full border p-3 rounded text-lg min-h-[250px] bg-blue-200 text-gray-900"
                     />
+                    <div className="mt-4 p-3 rounded bg-blue-100 text-gray-900">
+                      <h4 className="font-semibold mb-2">Preview</h4>
+                      <Linkify
+                        options={{
+                          target: "_blank",
+                          className: "text-blue-600 underline",
+                        }}
+                      >
+                        {form.background}
+                      </Linkify>
+                    </div>
+
                   </div>
                 )}
 
@@ -684,7 +757,7 @@ export default function SuperAdminTopics() {
 
 
               <div className="mt-6">
-                <button onClick={handleAdd} className="bg-orange-700 text-white px-4 py-2 rounded">Add Topic</button>
+                <button onClick={handleAdd} className="bg-orange-700 text-white px-4 py-2 rounded transform transition duration-100 active:scale-97">Add Topic</button>
               </div>
             </div>
           )}
@@ -736,6 +809,18 @@ export default function SuperAdminTopics() {
                       onChange={(e) => setForm({ ...form, key: e.target.value })}
                       className="w-full border p-3 rounded text-lg min-h-[150px] bg-blue-200 text-gray-900"
                     />
+
+                    <div className="mt-4 p-3 rounded bg-blue-100 text-gray-900">
+                      <h4 className="font-semibold mb-2">Preview</h4>
+                      <Linkify
+                        options={{
+                          target: "_blank",
+                          className: "text-blue-600 underline",
+                        }}
+                      >
+                        {form.key}
+                      </Linkify>
+                    </div>
                   </div>
                 )}
 
@@ -747,6 +832,18 @@ export default function SuperAdminTopics() {
                       onChange={(e) => setForm({ ...form, background: e.target.value })}
                       className="w-full border p-3 rounded text-lg min-h-[250px] bg-blue-200 text-gray-900"
                     />
+                    <div className="mt-4 p-3 rounded bg-blue-100 text-gray-900">
+                      <h4 className="font-semibold mb-2">Preview</h4>
+                      <Linkify
+                        options={{
+                          target: "_blank",
+                          className: "text-blue-600 underline",
+                        }}
+                      >
+                        {form.background}
+                      </Linkify>
+                    </div>
+
                   </div>
                 )}
 
@@ -769,8 +866,8 @@ export default function SuperAdminTopics() {
 
 
               <div className="mt-6 flex gap-4">
-                <button onClick={handleEdit} className="bg-yellow-400 text-black px-4 py-2 rounded">Update Topic</button>
-                <button onClick={() => handleDelete(selected._id)} className="bg-red-500 text-white px-4 py-2 rounded">Delete Topic</button>
+                <button onClick={handleEdit} className="bg-yellow-400 text-black px-4 py-2 rounded transform transition duration-100 active:scale-97">Update Topic</button>
+                <button onClick={() => handleDelete(selected._id)} className="bg-red-500 text-white px-4 py-2 rounded transform transition duration-100 active:scale-97 ">Delete Topic</button>
               </div>
             </div>
           )}

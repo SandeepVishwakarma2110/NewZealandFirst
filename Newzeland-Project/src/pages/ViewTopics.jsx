@@ -6,6 +6,7 @@ import { timeAgo } from "../utils/timeAgo";
 import { useLocation } from "react-router-dom";
 import { Moon, Sun } from "lucide-react";
 import { Link } from "react-router-dom";
+import Linkify from "linkify-react";
 
 export default function ViewTopics() {
   const location = useLocation();
@@ -274,8 +275,8 @@ export default function ViewTopics() {
         {search.trim() && (
           <div
             className={`absolute left-0 right-0 mt-1 z-50 rounded shadow border max-h-60 overflow-y-auto ${darkMode
-                ? "bg-gray-800 text-white border-gray-700"
-                : "bg-white text-black border-gray-300"
+              ? "bg-gray-800 text-white border-gray-700"
+              : "bg-white text-black border-gray-300"
               }`}
           >
             {filteredTopics.length > 0 ? (
@@ -317,8 +318,8 @@ export default function ViewTopics() {
           {search.trim() && (
             <div
               className={`absolute left-1/2 transform -translate-x-1/2 mt-1 w-[60%] max-h-60 overflow-y-auto rounded shadow border z-40 ${darkMode
-                  ? "bg-white text-gray-600 border-gray-700"
-                  : "bg-gray-700 text-white border-gray-300"
+                ? "bg-white text-gray-600 border-gray-700"
+                : "bg-gray-700 text-white border-gray-300"
                 }`}
             >
               {filteredTopics.length > 0 ? (
@@ -327,8 +328,8 @@ export default function ViewTopics() {
                     key={topic._id}
                     onClick={() => handleSelect(topic)}
                     className={`cursor-pointer px-4 py-2 hover:bg-blue-200 ${selected?._id === topic._id
-                        ? "bg-blue-500 text-white"
-                        : ""
+                      ? "bg-blue-500 text-white"
+                      : ""
                       }`}
                   >
                     {topic.title}
@@ -405,18 +406,18 @@ export default function ViewTopics() {
             </div>
           )}
 
-          {/* ---------------------------------------------------
+            {/* ---------------------------------------------------
              TOPIC TITLE + ACTIONS
           --------------------------------------------------- */}
-          <button
-            onClick={() => setDarkMode(!darkMode)}
-            className="flex items-center gap-2 px-4 py-2 rounded-full border mb-4
+            <button
+              onClick={() => setDarkMode(!darkMode)}
+              className="flex items-center gap-2 px-4 py-2 rounded-full border mb-4
                                         hover:bg-gray-200 dark:hover:bg-gray-700 transition self-end"
-          >
-            {darkMode ? <Sun size={18} /> : <Moon size={18} />}
-            <span>{darkMode ? "Light Mode" : "Dark Mode"}</span>
-          </button></div>
-          
+            >
+              {darkMode ? <Sun size={18} /> : <Moon size={18} />}
+              <span>{darkMode ? "Light Mode" : "Dark Mode"}</span>
+            </button></div>
+
           {selected && (
             <>
               <div className="flex flex-col lg:flex-row justify-between mb-4">
@@ -425,7 +426,7 @@ export default function ViewTopics() {
                 <div className="flex gap-3 mt-4 lg:mt-0 ">
                   <button
                     onClick={exportPDF}
-                    className="bg-blue-600 px-3 py-1 rounded text-white flex flex-row items-center"
+                    className="bg-blue-600 px-3 py-1 rounded text-white flex flex-row items-center transform transition duration-100 active:scale-97"
                   >
                     <svg width="22" height="22" fill="currentColor">
                       <path d="M11 2l4 4h-3v6h-2V6H7l4-4zm-7 12h2v4h10v-4h2v6H4v-6z" />
@@ -435,7 +436,7 @@ export default function ViewTopics() {
                   </button>
                   <button
                     onClick={emailTopic}
-                    className="bg-yellow-700 px-3 py-1 rounded text-white flex flex-row items-center"
+                    className="bg-yellow-700 px-3 py-1 rounded text-white flex flex-row items-center transform transition duration-100 active:scale-97"
                   >
                     <svg width="22" height="22" fill="currentColor">
                       <path d="M2 5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5zm16 0H4l7 5 7-5zm0 12V8l-7 5-7-5v9h14z" />
@@ -445,7 +446,7 @@ export default function ViewTopics() {
                   </button>
                   <button
                     onClick={handlePrint}
-                    className="bg-red-700 px-3 py-1 rounded text-white flex flex-row items-center"
+                    className="bg-red-700 px-3 py-1 rounded text-white flex flex-row items-center transform transition duration-100 active:scale-97"
                   >
                     <svg width="22" height="22" fill="currentColor">
                       <path d="M6 3h10v4H6V3zm-2 6h14a2 2 0 0 1 2 2v5h-4v-3H6v3H2v-5a2 2 0 0 1 2-2zm4 9h8v-4H8v4z" />
@@ -500,8 +501,8 @@ export default function ViewTopics() {
                     key={tab}
                     onClick={() => setSelected((s) => ({ ...s, tab }))}
                     className={`px-4 py-2 ${selected.tab === tab
-                        ? "border-b-2 border-red-600 text-red-600"
-                        : ""
+                      ? "border-b-2 border-red-600 text-red-600"
+                      : ""
                       }`}
                   >
                     {tab === "key"
@@ -515,25 +516,50 @@ export default function ViewTopics() {
 
               {/* TAB CONTENT */}
               <div className={`${cardBG} p-6 rounded shadow mb-6`}>
-                {selected.tab === "key" && (
+                {/* {selected.tab === "key" && (
                   <div className="whitespace-pre-line">{selected.key}</div>
+                )} */}
+                {selected.tab === "key" && (
+                  <div className="whitespace-pre-line text-gray-900">
+                    <Linkify
+                      options={{
+                        target: "_blank",
+                        className: "text-blue-600 underline cursor-pointer",
+                      }}
+                    >
+                      {selected.key}
+                    </Linkify>
+                  </div>
                 )}
 
-                {selected.tab === "background" && (
+                {/* {selected.tab === "background" && (
                   <div className="whitespace-pre-line">{selected.background}</div>
+                )} */}
+
+                {selected.tab === "background" && (
+                  <div className="whitespace-pre-line text-gray-900">
+                    <Linkify
+                      options={{
+                        target: "_blank",
+                        className: "text-blue-600 underline cursor-pointer",
+                      }}
+                    >
+                      {selected.background}
+                    </Linkify>
+                  </div>
                 )}
 
                 {selected.tab === "notes" && (
                   <div>
                     {selected.notes && selected.notes.filename ? (
-                     selected.notes.filename.toLowerCase().endsWith(".pdf") ? (
+                      selected.notes.filename.toLowerCase().endsWith(".pdf") ? (
                         <iframe
-                         src={`/api/topics/${selected._id}/notes`}
+                          src={`/api/topics/${selected._id}/notes`}
                           className="w-full h-[500px]"
                         ></iframe>
                       ) : (
                         <iframe
-                         src={`https://docs.google.com/gview?url=${window.location.origin}/api/topics/${selected._id}/notes&embedded=true`}
+                          src={`https://docs.google.com/gview?url=${window.location.origin}/api/topics/${selected._id}/notes&embedded=true`}
                           className="w-full h-[500px]"
                         ></iframe>
                       )
@@ -565,7 +591,7 @@ export default function ViewTopics() {
                         {(userRaw.role === 0 || userRaw.role === 1) && c.userId?._id === loggedUserId && (
                           <button
                             onClick={() => handleDeleteComment(c._id)}
-                            className="text-red-500 text-xs"
+                            className="text-red-500 text-xs transform transition duration-100 active:scale-97"
                           >
                             Delete
                           </button>
@@ -592,7 +618,7 @@ export default function ViewTopics() {
                           />
                           <button
                             onClick={() => handleAddReply(c._id)}
-                            className="bg-blue-600 text-white px-3 py-1 rounded text-sm"
+                            className="bg-blue-600 text-white px-3 py-1 rounded text-sm transform transition duration-100 active:scale-97"
                           >
                             ➤
                           </button>
@@ -614,7 +640,7 @@ export default function ViewTopics() {
                       />
                       <button
                         onClick={handleAddComment}
-                        className="mt-2 bg-blue-600 text-white px-3 py-1 rounded"
+                        className="mt-2 bg-blue-600 text-white px-3 py-1 rounded transform transition duration-100 active:scale-97"
                       >
                         Add Comment
                       </button>

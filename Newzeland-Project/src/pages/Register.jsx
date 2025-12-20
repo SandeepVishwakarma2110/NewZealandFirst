@@ -109,7 +109,7 @@ export default function Register() {
               placeholder="Full Name"
               value={form.name}
               onChange={handleChange}
-              className="w-full border p-3 rounded-md bg-transparent dark:bg-gray-700 dark:border-gray-600 text-white"
+              className="w-full border p-3 rounded-md bg-transparent dark:bg-gray-700 dark:border-gray-600 "
               required
             />
             <input
@@ -118,7 +118,7 @@ export default function Register() {
               placeholder="Email"
               value={form.email}
               onChange={handleChange}
-              className="w-full border p-3 rounded-md bg-transparent dark:bg-gray-700 dark:border-gray-600 text-white"
+              className="w-full border p-3 rounded-md bg-transparent dark:bg-gray-700 dark:border-gray-600 "
               required
             />
             {/* <input
@@ -157,7 +157,7 @@ export default function Register() {
             </div>
             <button
               type="submit"
-              className="w-full bg-red-600 hover:bg-red-700 text-white p-3 rounded-md transform transition duration-200 active:scale-95"
+              className="w-full bg-red-600 hover:bg-red-700 text-white p-3 rounded-md transform transition duration-100 active:scale-97"
             >
               Submit Request
             </button>
