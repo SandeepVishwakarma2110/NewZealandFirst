@@ -959,7 +959,7 @@ export default function AdminDashboard() {
 
               <button
                 type="submit"
-                className="bg-red-500 text-white px-4 py-2 rounded font-bold shadow-lg border-2 border-red-700 hover:bg-red-600 transform transition duration-100 active:scale-97"
+                className="bg-red-500 text-white px-4 py-2 rounded font-bold shadow-lg border-2 border-red-700 hover:bg-red-600 transform transition duration-200 active:scale-95"
                 style={{ boxShadow: "0 0 8px 2px #f87171" }}
               >
                 Add User

@@ -162,14 +162,14 @@ export default function Profile() {
 
               <button
                 onClick={() => setEdit(true)}
-                className="px-5 py-2 bg-blue-600 text-white rounded-lg shadow transform transition duration-100 active:scale-97"
+                className="px-5 py-2 bg-blue-600 text-white rounded-lg shadow transform transition duration-200 active:scale-95"
               >
                 ✏️ Edit Profile
               </button>
 
               <button
                 onClick={() => setShowChangePassword(true)}
-                className="px-5 py-2 bg-blue-600 text-white rounded-lg shadow transform transition duration-100 active:scale-97"
+                className="px-5 py-2 bg-blue-600 text-white rounded-lg shadow transform transition duration-200 active:scale-95"
               >
                 🔒 Change Password
               </button>
@@ -205,14 +205,14 @@ export default function Profile() {
 
             <button
               onClick={() => setEdit(true)}
-              className="w-full px-5 py-2 bg-blue-600 text-white rounded-lg shadow transform transition duration-100 active:scale-97"
+              className="w-full px-5 py-2 bg-blue-600 text-white rounded-lg shadow transform transition duration-200 active:scale-95"
             >
               ✏️ Edit Profile
             </button>
 
             <button
               onClick={() => setShowChangePassword(true)}
-              className="w-full px-5 py-2 bg-blue-600 text-white rounded-lg shadow transform transition duration-100 active:scale-97"
+              className="w-full px-5 py-2 bg-blue-600 text-white rounded-lg shadow transform transition duration-200 active:scale-95"
             >
               🔒 Change Password
             </button>
@@ -311,7 +311,7 @@ export default function Profile() {
             localStorage.clear();
             navigate("/login");
           }}
-          className="w-[80px] bg-red-600 text-white p-3 mt-6 rounded-lg transform transition duration-100 active:scale-97"
+          className="w-[80px] bg-red-600 text-white p-3 mt-6 rounded-lg transform transition duration-200 active:scale-95"
         >
           Logout
         </button>

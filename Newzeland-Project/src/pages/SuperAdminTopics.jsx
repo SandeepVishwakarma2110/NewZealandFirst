@@ -257,7 +257,7 @@ export default function SuperAdminTopics() {
           {/* Left buttons */}
           <div className="flex items-center gap-3">
             <button
-              className="bg-blue-600 text-white px-3 py-1 rounded transform transition duration-100 active:scale-97"
+              className="bg-blue-600 text-white px-3 py-1 rounded transform transition duration-200 active:scale-95"
               onClick={() => {
                 setActiveSection("add");
                 setSelected(null);
@@ -268,7 +268,7 @@ export default function SuperAdminTopics() {
               Add Topic
             </button>
             <button
-              className="bg-green-600 text-white px-3 py-1 rounded transform transition duration-100 active:scale-97"
+              className="bg-green-600 text-white px-3 py-1 rounded transform transition duration-200 active:scale-95"
               onClick={() => {
                 setActiveSection("view");
                 setActiveTab("key");
@@ -277,7 +277,7 @@ export default function SuperAdminTopics() {
               View Topics
             </button>
             <button
-              className="bg-yellow-400 text-black px-3 py-1 rounded transform transition duration-100 active:scale-97"
+              className="bg-yellow-400 text-black px-3 py-1 rounded transform transition duration-200 active:scale-95"
               onClick={() => {
                 if (selected) setActiveSection("edit");
               }}
@@ -359,7 +359,7 @@ export default function SuperAdminTopics() {
             <div className="flex flex-col gap-2">
 
               <button
-                className="w-full text-left bg-blue-600 text-white px-3 py-2 rounded transform transition duration-100 active:scale-97"
+                className="w-full text-left bg-blue-600 text-white px-3 py-2 rounded transform transition duration-200 active:scale-95"
                 onClick={() => {
                   setActiveSection("add");
                   setMenuOpen(false);
@@ -369,7 +369,7 @@ export default function SuperAdminTopics() {
               </button>
 
               <button
-                className="w-full text-left bg-green-600 text-white px-3 py-2 rounded transform transition duration-100 active:scale-97"
+                className="w-full text-left bg-green-600 text-white px-3 py-2 rounded transform transition duration-200 active:scale-95"
                 onClick={() => {
                   setActiveSection("view");
                   setActiveTab("key");
@@ -380,7 +380,7 @@ export default function SuperAdminTopics() {
               </button>
 
               <button
-                className="w-full text-left bg-yellow-400 text-black px-3 py-2 rounded transform transition duration-100 active:scale-97"
+                className="w-full text-left bg-yellow-400 text-black px-3 py-2 rounded transform transition duration-200 active:scale-95"
                 onClick={() => {
                   if (selected) setActiveSection("edit");
                   setMenuOpen(false);
@@ -476,18 +476,18 @@ export default function SuperAdminTopics() {
               {/* Metadata + action buttons */}
               <div className="flex flex-col lg:flex-row lg:items-center justify-between bg-gray-700 p-4 rounded shadow mb-6">
                 <div className="flex items-center gap-3">
-                  <button onClick={exportTopicPDF} className="bg-blue-600   px-3 py-1 rounded text-white flex flex-row transform transition duration-100 active:scale-97">
+                  <button onClick={exportTopicPDF} className="bg-blue-600   px-3 py-1 rounded text-white flex flex-row transform transition duration-200 active:scale-95">
                     <svg width="22" height="22" fill="currentColor">
                       <path d="M11 2l4 4h-3v6h-2V6H7l4-4zm-7 12h2v4h10v-4h2v6H4v-6z" />
                     </svg>
                     Export</button>
-                  <button onClick={emailTopic} className="bg-yellow-400   px-3 py-1 rounded text-white flex flex-row transform transition duration-100 active:scale-97">
+                  <button onClick={emailTopic} className="bg-yellow-400   px-3 py-1 rounded text-white flex flex-row transform transition duration-200 active:scale-95">
                     <svg width="22" height="22" fill="currentColor">
                       <path d="M2 5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5zm16 0H4l7 5 7-5zm0 12V8l-7 5-7-5v9h14z" />
                     </svg>
 
                     Email</button>
-                  <button onClick={handlePrint} className="bg-red-800  px-3 py-1 rounded text-white flex flex-row transform transition duration-100 active:scale-97">
+                  <button onClick={handlePrint} className="bg-red-800  px-3 py-1 rounded text-white flex flex-row transform transition duration-200 active:scale-95">
                     <svg width="22" height="22" fill="currentColor">
                       <path d="M6 3h10v4H6V3zm-2 6h14a2 2 0 0 1 2 2v5h-4v-3H6v3H2v-5a2 2 0 0 1 2-2zm4 9h8v-4H8v4z" />
                     </svg>
@@ -757,7 +757,7 @@ export default function SuperAdminTopics() {
 
 
               <div className="mt-6">
-                <button onClick={handleAdd} className="bg-orange-700 text-white px-4 py-2 rounded transform transition duration-100 active:scale-97">Add Topic</button>
+                <button onClick={handleAdd} className="bg-orange-700 text-white px-4 py-2 rounded transform transition duration-200 active:scale-95">Add Topic</button>
               </div>
             </div>
           )}
@@ -866,8 +866,8 @@ export default function SuperAdminTopics() {
 
 
               <div className="mt-6 flex gap-4">
-                <button onClick={handleEdit} className="bg-yellow-400 text-black px-4 py-2 rounded transform transition duration-100 active:scale-97">Update Topic</button>
-                <button onClick={() => handleDelete(selected._id)} className="bg-red-500 text-white px-4 py-2 rounded transform transition duration-100 active:scale-97 ">Delete Topic</button>
+                <button onClick={handleEdit} className="bg-yellow-400 text-black px-4 py-2 rounded transform transition duration-200 active:scale-95">Update Topic</button>
+                <button onClick={() => handleDelete(selected._id)} className="bg-red-500 text-white px-4 py-2 rounded transform transition duration-200 active:scale-95 ">Delete Topic</button>
               </div>
             </div>
           )}

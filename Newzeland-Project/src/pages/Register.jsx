@@ -157,7 +157,7 @@ export default function Register() {
             </div>
             <button
               type="submit"
-              className="w-full bg-red-600 hover:bg-red-700 text-white p-3 rounded-md transform transition duration-100 active:scale-97"
+              className="w-full bg-red-600 hover:bg-red-700 text-white p-3 rounded-md transform transition duration-200 active:scale-95"
             >
               Submit Request
             </button>
