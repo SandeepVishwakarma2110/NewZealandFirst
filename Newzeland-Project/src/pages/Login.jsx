@@ -123,7 +123,7 @@ export default function Login() {
                 placeholder="Username or Email"
                 value={form.email}
                 onChange={handleChange}
-                className="w-full border p-3 rounded-md bg-transparent dark:bg-gray-700 dark:border-gray-600  "
+                className="w-full border p-3 rounded-md bg-transparent  dark:border-gray-600  "
                 required
               />
             </div>
@@ -141,7 +141,7 @@ export default function Login() {
                 autoCapitalize="none"
                 spellCheck={false}
                 data-lpignore="true"
-                className="w-full border p-3 rounded-md bg-transparent dark:bg-gray-700 dark:border-gray-600 pr-10"
+                className="w-full border p-3 rounded-md bg-transparent  dark:border-gray-600 pr-10"
                 required
               />
 

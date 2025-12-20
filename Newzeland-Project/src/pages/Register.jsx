@@ -109,7 +109,7 @@ export default function Register() {
               placeholder="Full Name"
               value={form.name}
               onChange={handleChange}
-              className="w-full border p-3 rounded-md bg-transparent dark:bg-gray-700 dark:border-gray-600 "
+              className="w-full border p-3 rounded-md bg-transparent  dark:border-gray-600 "
               required
             />
             <input
@@ -118,18 +118,10 @@ export default function Register() {
               placeholder="Email"
               value={form.email}
               onChange={handleChange}
-              className="w-full border p-3 rounded-md bg-transparent dark:bg-gray-700 dark:border-gray-600 "
+              className="w-full border p-3 rounded-md bg-transparent  dark:border-gray-600 "
               required
             />
-            {/* <input
-              type="password"
-              name="password"
-              placeholder="Password"
-              value={form.password}
-              onChange={handleChange}
-              className="w-full border p-3 rounded-md bg-transparent dark:bg-gray-700 dark:border-gray-600 text-white"
-              required
-            /> */}
+            
             <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}
@@ -142,7 +134,7 @@ export default function Register() {
                 autoCapitalize="none"
                 spellCheck={false}
                 data-lpignore="true"
-                className="w-full border p-3 rounded-md bg-transparent dark:bg-gray-700 dark:border-gray-600 pr-10"
+                className="w-full border p-3 rounded-md bg-transparent  dark:border-gray-600 pr-10"
                 required
               />
 
