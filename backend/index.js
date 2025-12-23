@@ -26,11 +26,11 @@ const connectDB = () => {
         useNewUrlParser: true,
         useUnifiedTopology: true,
     }).then(() => console.log('MongoDB connected'))
-      .catch(err => console.log('MongoDB error:', err));
+        .catch(err => console.log('MongoDB error:', err));
 };
 
 // Password reset routes
-    
+
 const upload = multer();
 
 // The main function to create and configure the Express app/router
@@ -38,7 +38,7 @@ exports.createApp = () => {
     const app = express.Router(); // Using Router to make it a modular sub-application
 
 
-  
+
 
     // Connect to the database when the app is created
     connectDB();
@@ -61,7 +61,7 @@ exports.createApp = () => {
     app.use('/api/auth', authRoutes);
 
     // --- Authentication Routes ---
-  
+
     // Register request route
     app.post('/api/register-request', async (req, res) => {
         const { name, email, password, role } = req.body;
@@ -238,17 +238,17 @@ exports.createApp = () => {
             res.status(500).json({ message: 'Server error' });
         }
     });
-    
+
     // Delete a user (admin only)
     app.delete('/api/admin/users/:id', auth([0, 1]), async (req, res) => {
-    try {
-        const user = await RegisterRequest.findByIdAndDelete(req.params.id);
-        if (!user) return res.status(404).json({ message: 'User not found' });
-        res.json({ message: 'User deleted' });
-    } catch (err) {
-        res.status(500).json({ message: 'Server error' });
-    }
-});
+        try {
+            const user = await RegisterRequest.findByIdAndDelete(req.params.id);
+            if (!user) return res.status(404).json({ message: 'User not found' });
+            res.json({ message: 'User deleted' });
+        } catch (err) {
+            res.status(500).json({ message: 'Server error' });
+        }
+    });
 
     // Get all users for admin management
     app.get('/api/admin/users', auth([0, 1]), async (req, res) => {
@@ -262,34 +262,34 @@ exports.createApp = () => {
     });
 
     // --- Topic/Document Routes ---
-    app.post('/api/topics', auth([0,1]), upload.single('notes'), async (req, res) => {
+    app.post('/api/topics', auth([0, 1]), upload.single('notes'), async (req, res) => {
         try {
             const { title, key, background } = req.body;
             const topic = new Topic({
-      title,
-      key,
-      background,
-      notes: req.file
-        ? {
-            data: req.file.buffer,
-            contentType: req.file.mimetype,
-            filename: req.file.originalname
-          }
-        : undefined,
-      createdBy: req.user.id
-    });
+                title,
+                key,
+                background,
+                notes: req.file
+                    ? {
+                        data: req.file.buffer,
+                        contentType: req.file.mimetype,
+                        filename: req.file.originalname
+                    }
+                    : undefined,
+                createdBy: req.user.id
+            });
             await topic.save();
 
-           const level2Users = await RegisterRequest.find({ role: 2, status: 'approved' });
-const emails = level2Users.map(u => u.email).filter(Boolean); // filter out any empty emails
+            const level2Users = await RegisterRequest.find({ role: 2, status: 'approved' });
+            const emails = level2Users.map(u => u.email).filter(Boolean); // filter out any empty emails
 
-if (emails.length > 0) {
-  await sendEmail({
-    to: emails,
-    subject: 'New Document Added',
-    text: `A new document "${req.body.title}" has been added to the website.`
-  });
-}
+            if (emails.length > 0) {
+                await sendEmail({
+                    to: emails,
+                    subject: 'New Document Added',
+                    text: `A new document "${req.body.title}" has been added to the website.`
+                });
+            }
             res.status(201).json({ message: 'Topic created', topic });
         } catch (err) {
             console.error(err);
@@ -298,15 +298,40 @@ if (emails.length > 0) {
     });
 
     // Get all topics
+    // app.get('/api/topics', auth([0, 1, 2]), async (req, res) => {
+    //     try {
+    //         const topics = await Topic.find().sort({ createdAt: -1 });
+    //         res.json({ topics });
+    //     } catch (err) {
+    //         console.error(err);
+    //         res.status(500).json({ message: 'Server error' });
+    //     }
+    // });
+
     app.get('/api/topics', auth([0, 1, 2]), async (req, res) => {
         try {
-            const topics = await Topic.find().sort({ createdAt: -1 });
-            res.json({ topics });
+            const page = parseInt(req.query.page) || 1;
+            const limit = 20;
+            const skip = (page - 1) * limit;
+
+            const topics = await Topic.find()
+                .sort({ createdAt: -1 })
+                .skip(skip)
+                .limit(limit);
+
+            const total = await Topic.countDocuments();
+
+            res.json({
+                topics,
+                page,
+                totalPages: Math.ceil(total / limit)
+            });
         } catch (err) {
             console.error(err);
             res.status(500).json({ message: 'Server error' });
         }
     });
+
 
     // Get single topic (increment views)
     app.get('/api/topics/:id', auth([0, 1, 2]), async (req, res) => {
@@ -386,14 +411,14 @@ if (emails.length > 0) {
 
 
     app.get('/api/topics/:id/notes', async (req, res) => {
-  const topic = await Topic.findById(req.params.id);
-  if (!topic || !topic.notes || !topic.notes.data) {
-    return res.status(404).send('No notes found');
-  }
-  res.set('Content-Type', topic.notes.contentType);
-  res.set('Content-Disposition', `inline; filename="${topic.notes.filename}"`);
-  res.send(topic.notes.data);
-});
+        const topic = await Topic.findById(req.params.id);
+        if (!topic || !topic.notes || !topic.notes.data) {
+            return res.status(404).send('No notes found');
+        }
+        res.set('Content-Type', topic.notes.contentType);
+        res.set('Content-Disposition', `inline; filename="${topic.notes.filename}"`);
+        res.send(topic.notes.data);
+    });
 
     // Add comment
     app.post('/api/topics/:id/comments', auth([0, 1]), async (req, res) => {

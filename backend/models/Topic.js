@@ -15,5 +15,5 @@ const topicSchema = new mongoose.Schema({
   updatedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'RegisterRequest' },
   views: { type: Number, default: 0 }
 });
-
+topicSchema.index({ createdAt: -1 });
 module.exports = mongoose.model('Topic', topicSchema);

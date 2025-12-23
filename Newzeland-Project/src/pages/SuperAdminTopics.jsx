@@ -31,6 +31,8 @@ export default function SuperAdminTopics() {
 
   const token = localStorage.getItem("token");
   const pdfRef = useRef(null);
+  const [addStatus, setAddStatus] = useState(""); // '', 'adding', 'added', or error message
+  const [showAddPopup, setShowAddPopup] = useState(false);
 
   // Print handler: print key messages, background, notes
   const handlePrint = async () => {
@@ -167,23 +169,63 @@ export default function SuperAdminTopics() {
   };
 
   // ---------------- ADD ----------------
-  const handleAdd = async () => {
+  // const handleAdd = async () => {
+  //   const formData = new FormData();
+  //   formData.append("title", form.title);
+  //   formData.append("key", form.key);
+  //   formData.append("background", form.background);
+  //   if (form.notes) formData.append("notes", form.notes);
+
+  //   await fetch("/api/topics", {
+  //     method: "POST",
+  //     headers: { Authorization: `Bearer ${token}` },
+  //     body: formData,
+  //   });
+
+  //   await refreshTopics();
+  //   setActiveSection("view");
+  // };
+    const handleAdd = async () => {
+    setAddStatus("adding");
     const formData = new FormData();
     formData.append("title", form.title);
     formData.append("key", form.key);
     formData.append("background", form.background);
     if (form.notes) formData.append("notes", form.notes);
 
-    await fetch("/api/topics", {
-      method: "POST",
-      headers: { Authorization: `Bearer ${token}` },
-      body: formData,
-    });
-
-    await refreshTopics();
-    setActiveSection("view");
+    try {
+      const res = await fetch("/api/topics", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData,
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setAddStatus(data.message || "Topic added");
+        setShowAddPopup(true);
+        await refreshTopics();
+        setActiveSection("view");
+        setTimeout(() => {
+          setAddStatus("");
+          setShowAddPopup(false);
+        }, 400);
+      } else {
+        setAddStatus(data.message || "Error adding topic");
+        setShowAddPopup(true);
+        setTimeout(() => {
+          setAddStatus("");
+          setShowAddPopup(false);
+        }, 400);
+      }
+    } catch (err) {
+      setAddStatus("Error adding topic");
+      setShowAddPopup(true);
+      setTimeout(() => {
+        setAddStatus("");
+        setShowAddPopup(false);
+      }, 400);
+    }
   };
-
   // ---------------- SEARCH FILTER ----------------
   const filteredTopics = topics.filter((t) =>
     search.trim() === ""
@@ -756,8 +798,25 @@ export default function SuperAdminTopics() {
 
 
 
-              <div className="mt-6">
-                <button onClick={handleAdd} className="bg-orange-700 text-white px-4 py-2 rounded transform transition duration-200 active:scale-95">Add Topic</button>
+              <div className="mt-6 flex items-center gap-4">
+                <button
+                  onClick={handleAdd}
+                  className="bg-orange-700 text-white px-4 py-2 rounded"
+                  disabled={addStatus === "adding"}
+                >
+                  {addStatus === "adding" ? "Topic adding..." : "Add Topic"}
+                </button>
+                {/* Popup for add status */}
+                {showAddPopup && addStatus && addStatus !== "adding" && (
+                  <div className={`fixed inset-0 flex items-center justify-center z-50`}>
+                    <div className={`bg-white text-black rounded-lg shadow-lg px-8 py-6 border-2 ${addStatus.includes("Error") ? "border-red-400" : "border-green-400"}`}>
+                      <span className={addStatus.includes("Error") ? "text-red-500" : "text-green-600 font-semibold"}>
+                        {addStatus}
+                      </span>
+                    </div>
+                    <div className="fixed inset-0 bg-black opacity-30 z-40"></div>
+                  </div>
+                )}
               </div>
             </div>
           )}
