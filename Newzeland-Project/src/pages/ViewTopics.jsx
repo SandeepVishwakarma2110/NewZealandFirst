@@ -71,6 +71,27 @@ export default function ViewTopics() {
   // ---------------------------------------------------
   // FETCH TOPICS
   // ---------------------------------------------------
+  // const fetchTopics = async () => {
+  //   try {
+  //     const res = await fetch("/api/topics", {
+  //       headers: { Authorization: `Bearer ${token}` },
+  //     });
+  //     const data = await res.json();
+  //     setTopics(data.topics || []);
+  //     // Immediately select the most recent topic if available
+  //     if (data.topics && data.topics.length > 0) {
+  //       handleSelect({ ...data.topics[0], tab: 'key' });
+  //     }
+  //   } catch (err) {
+  //     console.error("Fetch topics error:", err);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   fetchTopics();
+  // }, []);
+
+  // ---------------- FETCH TOPICS ----------------
   const fetchTopics = async () => {
     try {
       const res = await fetch("/api/topics", {
@@ -78,19 +99,72 @@ export default function ViewTopics() {
       });
       const data = await res.json();
       setTopics(data.topics || []);
-      // Immediately select the most recent topic if available
-      if (data.topics && data.topics.length > 0) {
-        handleSelect({ ...data.topics[0], tab: 'key' });
-      }
     } catch (err) {
-      console.error("Fetch topics error:", err);
+      console.error("fetchTopics error:", err);
+    }
+  };
+
+
+
+  // Pinned topics state
+  const [pinnedTopics, setPinnedTopics] = useState([]);
+  // Fetch pinned topics for the current user
+  const fetchPinnedTopics = async () => {
+    try {
+      const res = await fetch("/api/users/me/pinned-topics", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      setPinnedTopics(data.pinnedTopics || []);
+    } catch (err) {
+      setPinnedTopics([]);
+    }
+  };
+
+  // Pin/unpin a topic for the current user
+  const handlePinToggle = async (topicId) => {
+    const token = localStorage.getItem("token");
+    const isPinned = pinnedTopics.includes(topicId);
+    try {
+      const res = await fetch("/api/users/me/pinned-topics", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          topicId,
+          action: isPinned ? "unpin" : "pin",
+        }),
+      });
+      const data = await res.json();
+      setPinnedTopics(data.pinnedTopics || []);
+    } catch (err) {
+      // Optionally show error
     }
   };
 
   useEffect(() => {
-    fetchTopics();
+    const token = localStorage.getItem("token");
+
+    fetch("/api/users/me/pinned-topics", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then(res => res.json())
+      .then(data => setPinnedTopics(data.pinnedTopics || []));
   }, []);
 
+
+  useEffect(() => {
+    const fetchAndSelect = async () => {
+      await fetchTopics();
+      await fetchPinnedTopics();
+    };
+    fetchAndSelect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token]);
 
   useEffect(() => {
     // After topics are loaded, select topic from query string if present
@@ -362,7 +436,7 @@ export default function ViewTopics() {
               </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto">
+            {/* <div className="flex-1 overflow-y-auto">
               <div className="text-sm text-gray-500 mb-2">Pinned Topics</div>
               <ul className="space-y-1 mb-6">
                 {filteredTopics.slice(0, 5).map((topic) => (
@@ -386,6 +460,116 @@ export default function ViewTopics() {
                     {topic.title}
                   </li>
                 ))}
+              </ul>
+            </div> */}
+            <div className="flex-1 overflow-y-auto">
+
+              {/* ================= PINNED TOPICS ================= */}
+              <div className="text-sm text-gray-500 mb-2">Pinned Topics</div>
+              <ul className="space-y-1 mb-6">
+                {filteredTopics.filter(t => pinnedTopics.includes(t._id)).length === 0 && (
+                  <li className="text-gray-400 italic px-2">No pinned topics</li>
+                )}
+
+                {filteredTopics
+                  .filter(topic => pinnedTopics.includes(topic._id))
+                  .map(topic => (
+                    <li
+                      key={topic._id}
+                      onClick={() => handleSelect(topic)}
+                      className={`cursor-pointer p-2 rounded flex items-center justify-between ${selected?._id === topic._id
+                          ? "bg-blue-300 border-l-4 border-blue-500"
+                          : "hover:bg-blue-200"
+                        }`}
+                    >
+                      <span className="flex items-center gap-2 font-medium">
+                        {topic.title}
+                      </span>
+
+                      {/* UNPIN BUTTON */}
+                      <button
+                        onClick={e => {
+                          e.stopPropagation();
+                          handlePinToggle(topic._id);
+                        }}
+                        title="Unpin"
+                        className="ml-2 text-yellow-500 hover:text-yellow-600 transition transform active:scale-95"
+                      >
+                        {/* Filled Pin */}
+                        <svg
+                          width="18"
+                          height="18"
+                          viewBox="0 0 24 24"
+                          fill="currentColor"
+                        >
+                          <path d="M14 2l8 8-4 4v8l-2 2-2-2v-8l-8-8z" />
+                        </svg>
+                      </button>
+                    </li>
+                  ))}
+              </ul>
+
+              {/* ================= ALL TOPICS ================= */}
+              <div className="text-sm text-gray-500 mb-2">All Topics</div>
+              <ul className="space-y-1">
+                {filteredTopics.map(topic => {
+                  const isPinned = pinnedTopics.includes(topic._id);
+
+                  return (
+                    <li
+                      key={topic._id}
+                      onClick={() => handleSelect(topic)}
+                      className={`cursor-pointer p-2 rounded flex items-center justify-between ${selected?._id === topic._id
+                          ? "bg-blue-300 border-l-4 border-blue-500"
+                          : "hover:bg-blue-200"
+                        }`}
+                    >
+                      <span className="flex items-center gap-2">
+                        {topic.title}
+                      </span>
+
+                      {/* PIN / UNPIN BUTTON */}
+                      <button
+                        onClick={e => {
+                          e.stopPropagation();
+                          handlePinToggle(topic._id);
+                        }}
+                        title={isPinned ? "Unpin" : "Pin"}
+                        className={`ml-2 transition transform active:scale-95 ${isPinned
+                            ? "text-yellow-500 hover:text-yellow-600"
+                            : "text-gray-400 hover:text-yellow-500"
+                          }`}
+                      >
+                        {isPinned ? (
+                          /* Filled Pin */
+                          <svg
+                            width="18"
+                            height="18"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                          >
+                            <path d="M14 2l8 8-4 4v8l-2 2-2-2v-8l-8-8z" />
+                          </svg>
+                        ) : (
+                          /* Outline Pin */
+                          <svg
+                            width="18"
+                            height="18"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            <path d="M16 3l5 5" />
+                            <path d="M9 3h6l3 3-6 6v7l-2 2-2-2v-7l-6-6 3-3z" />
+                          </svg>
+                        )}
+                      </button>
+                    </li>
+                  );
+                })}
               </ul>
             </div>
           </div>

@@ -11,7 +11,8 @@ const registerRequestSchema = new mongoose.Schema({
   address: { type: String },
   createdAt: { type: Date, default: Date.now },
   resetPasswordToken: { type: String },
-  resetPasswordExpires: { type: Date }
+  resetPasswordExpires: { type: Date },
+  pinnedTopics: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Topic' }]
 });
 
 module.exports = mongoose.model('RegisterRequest', registerRequestSchema);

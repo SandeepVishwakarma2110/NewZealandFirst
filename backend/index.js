@@ -333,6 +333,10 @@ exports.createApp = () => {
     });
 
 
+    // Pinned topics routes
+    const pinnedTopicsRoutes = require('./routes/pinnedTopics');
+    app.use('/api/users', pinnedTopicsRoutes);
+
     // Get single topic (increment views)
     app.get('/api/topics/:id', auth([0, 1, 2]), async (req, res) => {
         try {
