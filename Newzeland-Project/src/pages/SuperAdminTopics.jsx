@@ -276,7 +276,7 @@ export default function SuperAdminTopics() {
   }, [editStatus]);
 
   // ---------------- ADD ----------------
- 
+
   const handleAdd = async () => {
     setAddStatus("adding");
 
@@ -739,7 +739,7 @@ export default function SuperAdminTopics() {
               {/* Metadata + action buttons */}
               <div className="flex flex-col lg:flex-row lg:items-center justify-between bg-gray-700 p-4 rounded shadow mb-6">
                 <div className="flex items-center gap-3">
-                  
+
                   <button onClick={emailTopic} className="bg-yellow-400   px-3 py-1 rounded text-white flex flex-row transform transition duration-200 active:scale-95">
                     <svg width="22" height="22" fill="currentColor">
                       <path d="M2 5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5zm16 0H4l7 5 7-5zm0 12V8l-7 5-7-5v9h14z" />
@@ -1002,13 +1002,31 @@ export default function SuperAdminTopics() {
 
 
               <div className="mt-6 flex items-center gap-4">
-                <button
+                {/* <button
                   onClick={handleAdd}
                   className="bg-orange-700 text-white px-4 py-2 rounded"
                   disabled={addStatus === "adding"}
                 >
                   {addStatus === "adding" ? `Topic adding${dots}` : "Add Topic"}
-                </button>
+                </button> */}
+                 <button
+                    onClick={handleAdd}
+                    disabled={addStatus === "adding"}
+                    className="bg-orange-700 text-white px-5 py-2 rounded w-40 text-left
+             transform transition duration-200 active:scale-95"
+                  >
+                    {addStatus === "adding" ? (
+                      <span className="inline-flex items-center">
+                        Topic adding
+                        <span className="dots ml-1 w-[1.5em] inline-block text-left">
+                          {dots}
+                        </span>
+                      </span>
+                    ) : (
+                      " Add Topic"
+                    )}
+                  </button>
+
                 {/* Popup for add status */}
                 {showAddPopup && addStatus && addStatus !== "adding" && (
                   <div className={`fixed inset-0 flex items-center justify-center z-50`}>
@@ -1139,17 +1157,26 @@ export default function SuperAdminTopics() {
 
               <div className="mt-6 flex gap-4">
                 {/* <button onClick={handleEdit} className="bg-yellow-400 text-black px-4 py-2 rounded transform transition duration-200 active:scale-95">Update Topic</button> */}
-                <div className="mt-6 flex items-center gap-4">
-                  <button onClick={() => handleDelete(selected._id)} className="bg-red-500 text-white px-4 py-2 rounded transform transition duration-200 active:scale-95 ">Delete Topic</button>
-                </div>
+                
                 <div className="mt-6 flex items-center gap-4 ">
                   <button
                     onClick={handleEdit}
-                    className="bg-orange-700 text-white px-5 py-2 rounded text-left w-18 transform transition duration-200 active:scale-95"
                     disabled={editStatus === "updating"}
+                    className="bg-orange-700 text-white px-5 py-2 rounded w-40 text-left
+             transform transition duration-200 active:scale-95"
                   >
-                    {editStatus === "updating" ? `Topic updating${dots}` : "Update Topic"}
+                    {editStatus === "updating" ? (
+                      <span className="inline-flex items-center">
+                        Topic updating
+                        <span className="dots ml-1 w-[1.5em] inline-block text-left">
+                          {dots}
+                        </span>
+                      </span>
+                    ) : (
+                      "Update Topic"
+                    )}
                   </button>
+
                   {/* Popup for edit status */}
                   {showAddPopup && editStatus && editStatus !== "updating" && (
                     <div className={`fixed inset-0 flex items-center justify-center z-50`}>
@@ -1162,7 +1189,10 @@ export default function SuperAdminTopics() {
                     </div>
                   )}
                 </div>
-                
+                <div className="mt-6 flex items-center gap-4">
+                  <button onClick={() => handleDelete(selected._id)} className="bg-red-500 text-white px-4 py-2 rounded transform transition duration-200 active:scale-95 ">Delete Topic</button>
+                </div>
+
               </div>
             </div>
           )}
