@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
+import logo from "../assets/NZsite-logo.png";
+
 export default function Register() {
   const [form, setForm] = useState({ name: "", email: "", password: "" });
   const [message, setMessage] = useState("");
@@ -36,10 +38,7 @@ export default function Register() {
       <div className="flex-1 flex flex-col justify-center items-center bg-[#1a1a1a] text-white p-10">
         <div className="max-w-sm">
           <div className="flex items-center mb-4">
-            <div className="bg-red-600 p-2 rounded-md">
-              <span className="text-white text-xl font-bold">▶</span>
-            </div>
-            <h2 className="ml-2 text-lg font-semibold">NZ First</h2>
+            <img src={logo} alt="Logo" className="h-9 w-18 rounded" />
           </div>
 
           <h1 className="text-4xl font-bold mb-2">

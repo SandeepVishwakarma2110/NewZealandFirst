@@ -297,40 +297,40 @@ exports.createApp = () => {
         }
     });
 
-    // Get all topics
-    // app.get('/api/topics', auth([0, 1, 2]), async (req, res) => {
-    //     try {
-    //         const topics = await Topic.find().sort({ createdAt: -1 });
-    //         res.json({ topics });
-    //     } catch (err) {
-    //         console.error(err);
-    //         res.status(500).json({ message: 'Server error' });
-    //     }
-    // });
-
+    //Get all topics
     app.get('/api/topics', auth([0, 1, 2]), async (req, res) => {
         try {
-            const page = parseInt(req.query.page) || 1;
-            const limit = 20;
-            const skip = (page - 1) * limit;
-
-            const topics = await Topic.find()
-                .sort({ createdAt: -1 })
-                .skip(skip)
-                .limit(limit);
-
-            const total = await Topic.countDocuments();
-
-            res.json({
-                topics,
-                page,
-                totalPages: Math.ceil(total / limit)
-            });
+            const topics = await Topic.find().sort({ createdAt: -1 });
+            res.json({ topics });
         } catch (err) {
             console.error(err);
             res.status(500).json({ message: 'Server error' });
         }
     });
+
+    // app.get('/api/topics', auth([0, 1, 2]), async (req, res) => {
+    //     try {
+    //         const page = parseInt(req.query.page) || 1;
+    //         const limit = 20;
+    //         const skip = (page - 1) * limit;
+
+    //         const topics = await Topic.find()
+    //             .sort({ createdAt: -1 })
+    //             .skip(skip)
+    //             .limit(limit);
+
+    //         const total = await Topic.countDocuments();
+
+    //         res.json({
+    //             topics,
+    //             page,
+    //             totalPages: Math.ceil(total / limit)
+    //         });
+    //     } catch (err) {
+    //         console.error(err);
+    //         res.status(500).json({ message: 'Server error' });
+    //     }
+    // });
 
 
     // Pinned topics routes
@@ -356,7 +356,14 @@ exports.createApp = () => {
         try {
             const { title, key, background } = req.body;
             const update = { title, key, background, updatedAt: new Date(), updatedBy: req.user.id };
-            if (req.file) update.notes = req.file.filename;
+            //if (req.file) update.notes = req.file.filename;
+             if (req.file) {
+                update.notes = {
+                    data: req.file.buffer,
+                    contentType: req.file.mimetype,
+                    filename: req.file.originalname
+                };
+            }
 
             const topic = await Topic.findByIdAndUpdate(req.params.id, update, { new: true });
 

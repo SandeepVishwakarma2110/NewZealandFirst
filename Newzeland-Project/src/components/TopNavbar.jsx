@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import logo from "../assets/cppy.jpg";
+import logo from "../assets/NZsite-logo.png";
 
 export default function TopNavbar() {
   const navigate = useNavigate();
@@ -40,7 +40,7 @@ export default function TopNavbar() {
           className="flex items-center space-x-2 cursor-pointer"
           onClick={() => navigate("/welcome")}
         >
-          <img src={logo} alt="Logo" className="h-9 w-9 rounded" />
+          <img src={logo} alt="Logo" className="h-8 w-16 rounded " />
           <span className="hidden md:block text-lg font-semibold tracking-wide">
             LevelUp
           </span>

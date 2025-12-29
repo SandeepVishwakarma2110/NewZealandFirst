@@ -68,28 +68,6 @@ export default function ViewTopics() {
 
   //console.log("LOGGED USER ID →", loggedUserId);
 
-  // ---------------------------------------------------
-  // FETCH TOPICS
-  // ---------------------------------------------------
-  // const fetchTopics = async () => {
-  //   try {
-  //     const res = await fetch("/api/topics", {
-  //       headers: { Authorization: `Bearer ${token}` },
-  //     });
-  //     const data = await res.json();
-  //     setTopics(data.topics || []);
-  //     // Immediately select the most recent topic if available
-  //     if (data.topics && data.topics.length > 0) {
-  //       handleSelect({ ...data.topics[0], tab: 'key' });
-  //     }
-  //   } catch (err) {
-  //     console.error("Fetch topics error:", err);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   fetchTopics();
-  // }, []);
 
   // ---------------- FETCH TOPICS ----------------
   const fetchTopics = async () => {
@@ -282,26 +260,33 @@ export default function ViewTopics() {
   // ---------------------------------------------------
   // Export PDF / Email / Print
   // ---------------------------------------------------
-  const exportPDF = async () => {
-    if (!selected) return;
+  // const exportPDF = async () => {
+  //   if (!selected) return;
 
-    const canvas = await html2canvas(pdfRef.current, { scale: 2 });
-    const imgData = canvas.toDataURL("image/png");
-    const pdf = new jsPDF("p", "mm", "a4");
+  //   const canvas = await html2canvas(pdfRef.current, { scale: 2 });
+  //   const imgData = canvas.toDataURL("image/png");
+  //   const pdf = new jsPDF("p", "mm", "a4");
 
-    const width = pdf.internal.pageSize.getWidth();
-    const height = (canvas.height * width) / canvas.width;
+  //   const width = pdf.internal.pageSize.getWidth();
+  //   const height = (canvas.height * width) / canvas.width;
 
-    pdf.addImage(imgData, "PNG", 0, 0, width, height);
-    pdf.save(`${selected.title}.pdf`);
-  };
+  //   pdf.addImage(imgData, "PNG", 0, 0, width, height);
+  //   pdf.save(`${selected.title}.pdf`);
+  // };
 
+  // const emailTopic = () => {
+  //   if (!selected) return;
+  //   window.location.href = `mailto:?subject=${encodeURIComponent(
+  //     selected.title
+  //   )}&body=${encodeURIComponent(selected.background)}`;
+  // };
   const emailTopic = () => {
     if (!selected) return;
-    window.location.href = `mailto:?subject=${encodeURIComponent(
-      selected.title
-    )}&body=${encodeURIComponent(selected.background)}`;
+    const subject = encodeURIComponent(`Topic:${selected.title} || "Topic"`);
+    const body = encodeURIComponent(`Key message : ${selected.key || ""}\n\nBackground : ${selected.background || ""}`);
+    window.location.href = `mailto:?subject=${subject}&body=${body}`;
   };
+
 
   const printTopic = () => window.print();
 
@@ -608,7 +593,7 @@ export default function ViewTopics() {
                 <h1 className="text-3xl font-bold">{selected.title}</h1>
 
                 <div className="flex gap-3 mt-4 lg:mt-0 ">
-                  <button
+                  {/* <button
                     onClick={exportPDF}
                     className="bg-blue-600 px-3 py-1 rounded text-white flex flex-row items-center transform transition duration-100 active:scale-97"
                   >
@@ -617,7 +602,7 @@ export default function ViewTopics() {
                     </svg>
 
                     Export
-                  </button>
+                  </button> */}
                   <button
                     onClick={emailTopic}
                     className="bg-yellow-700 px-3 py-1 rounded text-white flex flex-row items-center transform transition duration-100 active:scale-97"
@@ -704,7 +689,7 @@ export default function ViewTopics() {
                   <div className="whitespace-pre-line">{selected.key}</div>
                 )} */}
                 {selected.tab === "key" && (
-                  <div className="whitespace-pre-line text-gray-900">
+                  <div className="whitespace-pre-line ">
                     <Linkify
                       options={{
                         target: "_blank",
@@ -784,7 +769,7 @@ export default function ViewTopics() {
                       <p>{c.text}</p>
                       <div className="ml-4 mt-2">
                         {c.replies?.map((r, idx) => (
-                          <div key={idx} className="text-sm text-gray-700">
+                          <div key={idx} className="text-sm ">
                             <span className="font-semibold">{r.userId?.name || "User"}:</span> {r.text}
                           </div>
                         ))}

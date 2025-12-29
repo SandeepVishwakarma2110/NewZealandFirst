@@ -34,39 +34,7 @@ export default function SuperAdminTopics() {
   const [addStatus, setAddStatus] = useState(""); // '', 'adding', 'added', or error message
   const [showAddPopup, setShowAddPopup] = useState(false);
 
-  // Print handler: print key messages, background, notes
-  const handlePrint = async () => {
-    if (!selected) return;
-    const doc = new jsPDF();
-    let y = 10;
-    doc.setFontSize(18);
-    doc.text(selected.title || "Topic", 10, y);
-    y += 10;
-    doc.setFontSize(14);
-    doc.text("Key Messages:", 10, y);
-    y += 8;
-    doc.setFontSize(12);
-    const keyLines = doc.splitTextToSize(selected.key || "", 180);
-    doc.text(keyLines, 10, y);
-    y += keyLines.length * 7 + 5;
-    doc.setFontSize(14);
-    doc.text("Background:", 10, y);
-    y += 8;
-    doc.setFontSize(12);
-    const bgLines = doc.splitTextToSize(selected.background || "", 180);
-    doc.text(bgLines, 10, y);
-    y += bgLines.length * 7 + 5;
-    doc.setFontSize(14);
-    doc.text("Notes:", 10, y);
-    y += 8;
-    doc.setFontSize(12);
-    if (selected.notes) {
-      doc.text((selected.notes + '').toString(), 10, y);
-    } else {
-      doc.text("No notes uploaded.", 10, y);
-    }
-    doc.save((selected.title || "topic") + "-details.pdf");
-  };
+  
 
   // ---------------- FETCH TOPICS ----------------
   // const fetchTopics = async () => {
@@ -312,45 +280,78 @@ export default function SuperAdminTopics() {
   );
 
   // Helpers
-  const exportTopicPDF = async () => {
-    if (!selected) return;
+  // const exportTopicPDF = async () => {
+  //   if (!selected) return;
 
-    // Create a printable snapshot from pdfRef (which wraps the main content area)
-    try {
-      const element = pdfRef.current;
-      if (!element) {
-        console.error("No element to export");
-        return;
-      }
+  //   // Create a printable snapshot from pdfRef (which wraps the main content area)
+  //   try {
+  //     const element = pdfRef.current;
+  //     if (!element) {
+  //       console.error("No element to export");
+  //       return;
+  //     }
 
-      // Use html2canvas to capture (scale for better resolution)
-      const canvas = await html2canvas(element, { scale: 2, useCORS: true, logging: false });
-      const imgData = canvas.toDataURL("image/png");
-      const pdf = new jsPDF("p", "mm", "a4");
+  //     // Use html2canvas to capture (scale for better resolution)
+  //     const canvas = await html2canvas(element, { scale: 2, useCORS: true, logging: false });
+  //     const imgData = canvas.toDataURL("image/png");
+  //     const pdf = new jsPDF("p", "mm", "a4");
 
-      // Calculate dimensions
-      const imgProps = pdf.getImageProperties(imgData);
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+  //     // Calculate dimensions
+  //     const imgProps = pdf.getImageProperties(imgData);
+  //     const pdfWidth = pdf.internal.pageSize.getWidth();
+  //     const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
 
-      pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-      pdf.save(`${selected.title || "topic"}.pdf`);
-    } catch (err) {
-      console.error("Export PDF failed:", err);
-      // fallback: try a simple window.print (user can Save as PDF)
-      window.print();
-    }
-  };
+  //     pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+  //     pdf.save(`${selected.title || "topic"}.pdf`);
+  //   } catch (err) {
+  //     console.error("Export PDF failed:", err);
+  //     // fallback: try a simple window.print (user can Save as PDF)
+  //     window.print();
+  //   }
+  // };
 
   const emailTopic = () => {
     if (!selected) return;
-    const subject = encodeURIComponent(selected.title || "Topic");
-    const body = encodeURIComponent(`${selected.key || ""}\n\n${selected.background || ""}`);
+    const subject = encodeURIComponent(`Topic : ${selected.title}`|| "Topic");
+    const body = encodeURIComponent(`Key message : ${selected.key || ""}\n\nBackground : ${selected.background || ""}`);
     window.location.href = `mailto:?subject=${subject}&body=${body}`;
   };
+   const emailTopicAtc = () => {
+    
+  };
 
-  const printTopic = () => {
-    window.print();
+  // Print handler: print key messages, background, notes
+  const handlePrint = async () => {
+    if (!selected) return;
+    const doc = new jsPDF();
+    let y = 10;
+    doc.setFontSize(18);
+    doc.text(selected.title || "Topic", 10, y);
+    y += 10;
+    doc.setFontSize(14);
+    doc.text("Key Messages:", 10, y);
+    y += 8;
+    doc.setFontSize(12);
+    const keyLines = doc.splitTextToSize(selected.key || "", 180);
+    doc.text(keyLines, 10, y);
+    y += keyLines.length * 7 + 5;
+    doc.setFontSize(14);
+    doc.text("Background:", 10, y);
+    y += 8;
+    doc.setFontSize(12);
+    const bgLines = doc.splitTextToSize(selected.background || "", 180);
+    doc.text(bgLines, 10, y);
+    y += bgLines.length * 7 + 5;
+    doc.setFontSize(14);
+    doc.text("Notes:", 10, y);
+    y += 8;
+    doc.setFontSize(12);
+    if (selected.notes) {
+      doc.text((selected.notes + '').toString(), 10, y);
+    } else {
+      doc.text("No notes uploaded.", 10, y);
+    }
+    doc.save((selected.title || "topic") + "-details.pdf");
   };
 
   const parseCoreMessages = (text) => {
@@ -526,33 +527,6 @@ export default function SuperAdminTopics() {
                 <button className="lg:hidden text-xl text-gray-400" onClick={() => setSideOpen(false)}>✕</button>
               </div>
 
-              {/* <div className="flex-1 overflow-y-auto">
-                <div className="text-sm text-gray-500 mb-2">Pinned Topics</div>
-                <ul className="space-y-1 mb-6">
-                  {filteredTopics.slice(0, 5).map((topic) => (
-                    <li
-                      key={topic._id}
-                      onClick={() => handleSelect(topic)}
-                      className={`cursor-pointer p-2 rounded ${selected?._id === topic._id ? "bg-blue-300 border-l-4 border-blue-500" : "hover:bg-blue-200"}`}
-                    >
-                      {topic.title}
-                    </li>
-                  ))}
-                </ul>
-
-                <div className="text-sm text-gray-500 mb-2">All Topics</div>
-                <ul className="space-y-1">
-                  {filteredTopics.map((topic) => (
-                    <li
-                      key={topic._id}
-                      onClick={() => handleSelect(topic)}
-                      className={`cursor-pointer p-2 rounded ${selected?._id === topic._id ? "bg-blue-300 border-l-4 border-blue-500" : "hover:bg-blue-200"}`}
-                    >
-                      {topic.title}
-                    </li>
-                  ))}
-                </ul>
-              </div> */}
               <div className="flex-1 overflow-y-auto">
 
                 {/* ================= PINNED TOPICS ================= */}
@@ -704,11 +678,11 @@ export default function SuperAdminTopics() {
               {/* Metadata + action buttons */}
               <div className="flex flex-col lg:flex-row lg:items-center justify-between bg-gray-700 p-4 rounded shadow mb-6">
                 <div className="flex items-center gap-3">
-                  <button onClick={exportTopicPDF} className="bg-blue-600   px-3 py-1 rounded text-white flex flex-row transform transition duration-200 active:scale-95">
+                  {/* <button onClick={exportTopicPDF} className="bg-blue-600   px-3 py-1 rounded text-white flex flex-row transform transition duration-200 active:scale-95">
                     <svg width="22" height="22" fill="currentColor">
                       <path d="M11 2l4 4h-3v6h-2V6H7l4-4zm-7 12h2v4h10v-4h2v6H4v-6z" />
                     </svg>
-                    Export</button>
+                    Export</button> */}
                   <button onClick={emailTopic} className="bg-yellow-400   px-3 py-1 rounded text-white flex flex-row transform transition duration-200 active:scale-95">
                     <svg width="22" height="22" fill="currentColor">
                       <path d="M2 5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5zm16 0H4l7 5 7-5zm0 12V8l-7 5-7-5v9h14z" />
@@ -800,14 +774,7 @@ export default function SuperAdminTopics() {
                   <div>
                     <h3 className="text-lg font-semibold mb-4 text-white">Core Messages</h3>
 
-                    {/* <div className="space-y-4">
-                      {parseCoreMessages(selected.key).map((msg, idx) => (
-                        <div key={idx} className="p-4 border rounded bg-blue-300">
-                          <div className="text-sm text-blue-600 font-semibold mb-2"> {idx + 1}. </div>
-                          <div className="text-sm whitespace-pre-line text-white font-semibold">{msg}</div>
-                        </div>
-                      ))}
-                    </div> */}
+              
                     <div className="space-y-4">
                       {parseCoreMessages(selected.key).map((msg, idx) => (
                         <div key={idx} className="p-4 border rounded bg-blue-300">
@@ -913,13 +880,6 @@ export default function SuperAdminTopics() {
                       className="w-full border p-3 rounded mb-4 text-lg bg-blue-200 text-gray-900"
                     />
 
-                    {/* <h3 className="font-semibold mb-2 text-white">Key Messages</h3>
-                    <textarea
-                      value={form.key}
-                      onChange={(e) => setForm({ ...form, key: e.target.value })}
-                      className="w-full border p-3 rounded text-lg min-h-[150px] bg-blue-200 text-gray-900"
-                    /> 
-                    */}
 
 
                     <h3 className="font-semibold mb-2 text-white">Key Messages</h3>
@@ -1092,7 +1052,7 @@ export default function SuperAdminTopics() {
                   </div>
                 )}
 
-                {formTab === "notes" && (
+                {/* {formTab === "notes" && (
                   <div>
                     <h3 className="font-semibold mb-2 text-white">Notes File</h3>
                     <input
@@ -1102,6 +1062,29 @@ export default function SuperAdminTopics() {
                     />
                     {selected?.notes && (
                       <p className="mt-2 text-sm">Current: {selected.notes}</p>
+                    )}
+                  </div>
+                )} */}
+                {formTab === "notes" && (
+                  <div>
+                    <h3 className="font-semibold mb-2 text-white">Notes File</h3>
+                    <input
+                      type="file"
+                      onChange={(e) => setForm({ ...form, notes: e.target.files[0] })}
+                      className="w-full border p-2 rounded min-h-[250px] bg-blue-200 text-gray-700"
+                    />
+                    {selected?.notes && selected.notes.filename && (
+                      <div className="mt-2 text-sm flex items-center gap-2">
+                        <span className="text-gray-300">Current: {selected.notes.filename}</span>
+                        <a
+                          href={`/api/topics/${selected._id}/notes`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-400 underline ml-2"
+                        >
+                          View
+                        </a>
+                      </div>
                     )}
                   </div>
                 )}
