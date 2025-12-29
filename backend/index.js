@@ -290,7 +290,7 @@ exports.createApp = () => {
                     text: `A new document "${req.body.title}" has been added to the website.`
                 });
             }
-            res.status(201).json({ message: 'Topic created', topic });
+            res.status(201).json({ message: 'Topic added', topic });
         } catch (err) {
             console.error(err);
             res.status(500).json({ message: 'Server error' });

@@ -31,10 +31,12 @@ export default function SuperAdminTopics() {
 
   const token = localStorage.getItem("token");
   const pdfRef = useRef(null);
-  const [addStatus, setAddStatus] = useState(""); // '', 'adding', 'added', or error message
+  const [addStatus, setAddStatus] = useState("");
+  const [editStatus, setEditStatus] = useState("");
   const [showAddPopup, setShowAddPopup] = useState(false);
+  const [dots, setDots] = useState("");
 
-  
+
 
   // ---------------- FETCH TOPICS ----------------
   // const fetchTopics = async () => {
@@ -187,17 +189,66 @@ export default function SuperAdminTopics() {
 
   // ---------------- EDIT ----------------
   const handleEdit = async () => {
+
+    setEditStatus("updating");
     const formData = new FormData();
     formData.append("title", form.title);
     formData.append("key", form.key);
     formData.append("background", form.background);
     if (form.notes) formData.append("notes", form.notes);
 
-    await fetch(`/api/topics/${selected._id}`, {
-      method: "PUT",
-      headers: { Authorization: `Bearer ${token}` },
-      body: formData,
-    });
+    // await fetch(`/api/topics/${selected._id}`, {
+    //   method: "PUT",
+    //   headers: { Authorization: `Bearer ${token}` },
+    //   body: formData,
+    // });
+
+    try {
+      const res = await fetch(`/api/topics/${selected._id}`, {
+        method: "PUT",
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData,
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setEditStatus(data.message || "Topic updated");
+        setShowAddPopup(true);
+        await refreshTopics();
+        setActiveSection("view");
+        setTimeout(() => {
+          setEditStatus("");
+          setShowAddPopup(false);
+        }, 400);
+      } else {
+        setEditStatus(data.message || "Error updating topic");
+        setShowAddPopup(true);
+        setTimeout(() => {
+          setEditStatus("");
+          setShowAddPopup(false);
+        }, 400);
+      }
+    } catch (err) {
+      setEditStatus("Error updating topic");
+      setShowAddPopup(true);
+      setTimeout(() => {
+        setEditStatus("");
+        setShowAddPopup(false);
+      }, 400);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     // Don’t reset everything
     await fetchTopics();
@@ -212,25 +263,23 @@ export default function SuperAdminTopics() {
     setActiveSection("view");
   };
 
+
+
+  useEffect(() => {
+    if (editStatus !== "updating") return;
+
+    const interval = setInterval(() => {
+      setDots(prev => (prev.length < 3 ? prev + "." : ""));
+    }, 500);
+
+    return () => clearInterval(interval);
+  }, [editStatus]);
+
   // ---------------- ADD ----------------
-  // const handleAdd = async () => {
-  //   const formData = new FormData();
-  //   formData.append("title", form.title);
-  //   formData.append("key", form.key);
-  //   formData.append("background", form.background);
-  //   if (form.notes) formData.append("notes", form.notes);
-
-  //   await fetch("/api/topics", {
-  //     method: "POST",
-  //     headers: { Authorization: `Bearer ${token}` },
-  //     body: formData,
-  //   });
-
-  //   await refreshTopics();
-  //   setActiveSection("view");
-  // };
+ 
   const handleAdd = async () => {
     setAddStatus("adding");
+
     const formData = new FormData();
     formData.append("title", form.title);
     formData.append("key", form.key);
@@ -270,6 +319,18 @@ export default function SuperAdminTopics() {
       }, 400);
     }
   };
+
+
+  useEffect(() => {
+    if (addStatus !== "adding") return;
+
+    const interval = setInterval(() => {
+      setDots(prev => (prev.length < 3 ? prev + "." : ""));
+    }, 500);
+
+    return () => clearInterval(interval);
+  }, [addStatus]);
+
   // ---------------- SEARCH FILTER ----------------
   const filteredTopics = topics.filter((t) =>
     search.trim() === ""
@@ -312,12 +373,12 @@ export default function SuperAdminTopics() {
 
   const emailTopic = () => {
     if (!selected) return;
-    const subject = encodeURIComponent(`Topic : ${selected.title}`|| "Topic");
+    const subject = encodeURIComponent(`Topic : ${selected.title}` || "Topic");
     const body = encodeURIComponent(`Key message : ${selected.key || ""}\n\nBackground : ${selected.background || ""}`);
     window.location.href = `mailto:?subject=${subject}&body=${body}`;
   };
-   const emailTopicAtc = () => {
-    
+  const emailTopicAtc = () => {
+
   };
 
   // Print handler: print key messages, background, notes
@@ -543,8 +604,8 @@ export default function SuperAdminTopics() {
                         key={topic._id}
                         onClick={() => handleSelect(topic)}
                         className={`cursor-pointer p-2 rounded flex items-center justify-between ${selected?._id === topic._id
-                            ? "bg-blue-300 border-l-4 border-blue-500"
-                            : "hover:bg-blue-200"
+                          ? "bg-blue-300 border-l-4 border-blue-500"
+                          : "hover:bg-blue-200"
                           }`}
                       >
                         <span className="flex items-center gap-2 font-medium">
@@ -585,8 +646,8 @@ export default function SuperAdminTopics() {
                         key={topic._id}
                         onClick={() => handleSelect(topic)}
                         className={`cursor-pointer p-2 rounded flex items-center justify-between ${selected?._id === topic._id
-                            ? "bg-blue-300 border-l-4 border-blue-500"
-                            : "hover:bg-blue-200"
+                          ? "bg-blue-300 border-l-4 border-blue-500"
+                          : "hover:bg-blue-200"
                           }`}
                       >
                         <span className="flex items-center gap-2">
@@ -601,8 +662,8 @@ export default function SuperAdminTopics() {
                           }}
                           title={isPinned ? "Unpin" : "Pin"}
                           className={`ml-2 transition transform active:scale-95 ${isPinned
-                              ? "text-yellow-500 hover:text-yellow-600"
-                              : "text-gray-400 hover:text-yellow-500"
+                            ? "text-yellow-500 hover:text-yellow-600"
+                            : "text-gray-400 hover:text-yellow-500"
                             }`}
                         >
                           {isPinned ? (
@@ -678,11 +739,7 @@ export default function SuperAdminTopics() {
               {/* Metadata + action buttons */}
               <div className="flex flex-col lg:flex-row lg:items-center justify-between bg-gray-700 p-4 rounded shadow mb-6">
                 <div className="flex items-center gap-3">
-                  {/* <button onClick={exportTopicPDF} className="bg-blue-600   px-3 py-1 rounded text-white flex flex-row transform transition duration-200 active:scale-95">
-                    <svg width="22" height="22" fill="currentColor">
-                      <path d="M11 2l4 4h-3v6h-2V6H7l4-4zm-7 12h2v4h10v-4h2v6H4v-6z" />
-                    </svg>
-                    Export</button> */}
+                  
                   <button onClick={emailTopic} className="bg-yellow-400   px-3 py-1 rounded text-white flex flex-row transform transition duration-200 active:scale-95">
                     <svg width="22" height="22" fill="currentColor">
                       <path d="M2 5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5zm16 0H4l7 5 7-5zm0 12V8l-7 5-7-5v9h14z" />
@@ -774,7 +831,7 @@ export default function SuperAdminTopics() {
                   <div>
                     <h3 className="text-lg font-semibold mb-4 text-white">Core Messages</h3>
 
-              
+
                     <div className="space-y-4">
                       {parseCoreMessages(selected.key).map((msg, idx) => (
                         <div key={idx} className="p-4 border rounded bg-blue-300">
@@ -950,7 +1007,7 @@ export default function SuperAdminTopics() {
                   className="bg-orange-700 text-white px-4 py-2 rounded"
                   disabled={addStatus === "adding"}
                 >
-                  {addStatus === "adding" ? "Topic adding..." : "Add Topic"}
+                  {addStatus === "adding" ? `Topic adding${dots}` : "Add Topic"}
                 </button>
                 {/* Popup for add status */}
                 {showAddPopup && addStatus && addStatus !== "adding" && (
@@ -1052,19 +1109,6 @@ export default function SuperAdminTopics() {
                   </div>
                 )}
 
-                {/* {formTab === "notes" && (
-                  <div>
-                    <h3 className="font-semibold mb-2 text-white">Notes File</h3>
-                    <input
-                      type="file"
-                      onChange={(e) => setForm({ ...form, notes: e.target.files[0] })}
-                      className="w-full border p-2 rounded min-h-[250px] bg-blue-200 text-gray-700"
-                    />
-                    {selected?.notes && (
-                      <p className="mt-2 text-sm">Current: {selected.notes}</p>
-                    )}
-                  </div>
-                )} */}
                 {formTab === "notes" && (
                   <div>
                     <h3 className="font-semibold mb-2 text-white">Notes File</h3>
@@ -1094,8 +1138,31 @@ export default function SuperAdminTopics() {
 
 
               <div className="mt-6 flex gap-4">
-                <button onClick={handleEdit} className="bg-yellow-400 text-black px-4 py-2 rounded transform transition duration-200 active:scale-95">Update Topic</button>
-                <button onClick={() => handleDelete(selected._id)} className="bg-red-500 text-white px-4 py-2 rounded transform transition duration-200 active:scale-95 ">Delete Topic</button>
+                {/* <button onClick={handleEdit} className="bg-yellow-400 text-black px-4 py-2 rounded transform transition duration-200 active:scale-95">Update Topic</button> */}
+                <div className="mt-6 flex items-center gap-4">
+                  <button onClick={() => handleDelete(selected._id)} className="bg-red-500 text-white px-4 py-2 rounded transform transition duration-200 active:scale-95 ">Delete Topic</button>
+                </div>
+                <div className="mt-6 flex items-center gap-4 ">
+                  <button
+                    onClick={handleEdit}
+                    className="bg-orange-700 text-white px-5 py-2 rounded text-left w-18 transform transition duration-200 active:scale-95"
+                    disabled={editStatus === "updating"}
+                  >
+                    {editStatus === "updating" ? `Topic updating${dots}` : "Update Topic"}
+                  </button>
+                  {/* Popup for edit status */}
+                  {showAddPopup && editStatus && editStatus !== "updating" && (
+                    <div className={`fixed inset-0 flex items-center justify-center z-50`}>
+                      <div className={`bg-white text-black rounded-lg shadow-lg px-8 py-6 border-2 ${editStatus.includes("Error") ? "border-red-400" : "border-green-400"}`}>
+                        <span className={editStatus.includes("Error") ? "text-red-500" : "text-green-600 font-semibold"}>
+                          {editStatus}
+                        </span>
+                      </div>
+                      <div className="fixed inset-0 bg-black opacity-30 z-40"></div>
+                    </div>
+                  )}
+                </div>
+                
               </div>
             </div>
           )}
