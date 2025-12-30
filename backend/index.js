@@ -262,20 +262,22 @@ exports.createApp = () => {
     });
 
     // --- Topic/Document Routes ---
-    app.post('/api/topics', auth([0, 1]), upload.single('notes'), async (req, res) => {
+    app.post('/api/topics', auth([0, 1]), upload.array('notes', 5), async (req, res) => {
         try {
             const { title, key, background } = req.body;
+
+            const notesFiles = req.files
+                ? req.files.map(file => ({
+                    data: file.buffer,
+                    contentType: file.mimetype,
+                    filename: file.originalname
+                }))
+                : [];
             const topic = new Topic({
                 title,
                 key,
                 background,
-                notes: req.file
-                    ? {
-                        data: req.file.buffer,
-                        contentType: req.file.mimetype,
-                        filename: req.file.originalname
-                    }
-                    : undefined,
+                notes: notesFiles,
                 createdBy: req.user.id
             });
             await topic.save();
@@ -308,30 +310,24 @@ exports.createApp = () => {
         }
     });
 
-    // app.get('/api/topics', auth([0, 1, 2]), async (req, res) => {
-    //     try {
-    //         const page = parseInt(req.query.page) || 1;
-    //         const limit = 20;
-    //         const skip = (page - 1) * limit;
+    
 
-    //         const topics = await Topic.find()
-    //             .sort({ createdAt: -1 })
-    //             .skip(skip)
-    //             .limit(limit);
+    // Document routes done
+    app.get("/api/topics/:id/notes/:index", async (req, res) => {
+        try {
+            const topic = await Topic.findById(req.params.id);
+            if (!topic || !topic.notes || !topic.notes[req.params.index]) {
+                return res.status(404).send("File not found");
+            }
 
-    //         const total = await Topic.countDocuments();
-
-    //         res.json({
-    //             topics,
-    //             page,
-    //             totalPages: Math.ceil(total / limit)
-    //         });
-    //     } catch (err) {
-    //         console.error(err);
-    //         res.status(500).json({ message: 'Server error' });
-    //     }
-    // });
-
+            const file = topic.notes[req.params.index];
+            res.set("Content-Type", file.contentType);
+            res.set("Content-Disposition", `inline; filename="${file.filename}"`);
+            res.send(file.data);
+        } catch (err) {
+            res.status(500).send("Server error");
+        }
+    });
 
     // Pinned topics routes
     const pinnedTopicsRoutes = require('./routes/pinnedTopics');
@@ -352,23 +348,34 @@ exports.createApp = () => {
     });
 
     // Edit topic
-    app.put('/api/topics/:id', auth([0]), upload.single('notes'), async (req, res) => {
+    
+    app.put('/api/topics/:id', auth([0]), upload.array('notes', 5), async (req, res) => {
         try {
             const { title, key, background } = req.body;
-            const update = { title, key, background, updatedAt: new Date(), updatedBy: req.user.id };
-            //if (req.file) update.notes = req.file.filename;
-             if (req.file) {
-                update.notes = {
-                    data: req.file.buffer,
-                    contentType: req.file.mimetype,
-                    filename: req.file.originalname
-                };
+
+
+            const topic = await Topic.findById(req.params.id);
+            if (!topic) return res.status(404).json({ message: "Topic not found" });
+
+            // Update text fields
+            topic.title = title;
+            topic.key = key;
+            topic.background = background;
+            topic.updatedAt = new Date();
+            topic.updatedBy = req.user.id;
+
+            // Append new notes (if any)
+            if (req.files && req.files.length > 0) {
+                const newNotes = req.files.map(file => ({
+                    data: file.buffer,
+                    contentType: file.mimetype,
+                    filename: file.originalname
+                }));
+
+                topic.notes.push(...newNotes);
             }
 
-            const topic = await Topic.findByIdAndUpdate(req.params.id, update, { new: true });
-
-            if (!topic) return res.status(404).json({ message: 'Topic not found' });
-
+            await topic.save();
             // Send email to the creator
             const populatedTopic = await Topic.findById(req.params.id).populate('createdBy');
             if (populatedTopic?.createdBy?.email) {
@@ -385,6 +392,35 @@ exports.createApp = () => {
             res.status(500).json({ message: 'Server error' });
         }
     });
+
+    //delete notes from topic
+    app.delete(
+        "/api/topics/:id/notes/:index",
+        auth([0]),
+        async (req, res) => {
+            try {
+                const topic = await Topic.findById(req.params.id);
+                if (!topic) return res.status(404).json({ message: "Topic not found" });
+
+                const index = Number(req.params.index);
+                if (!topic.notes[index]) {
+                    return res.status(404).json({ message: "File not found" });
+                }
+
+                topic.notes.splice(index, 1);
+                topic.updatedAt = new Date();
+                topic.updatedBy = req.user.id;
+
+                await topic.save();
+
+                res.json({ message: "Document deleted", notes: topic.notes });
+            } catch (err) {
+                console.error(err);
+                res.status(500).json({ message: "Server error" });
+            }
+        }
+    );
+
 
     // Delete topic
     app.delete('/api/topics/:id', auth([0]), async (req, res) => {

@@ -4,11 +4,19 @@ const topicSchema = new mongoose.Schema({
   title: { type: String, required: true },
   key: { type: String, required: true },
   background: { type: String, required: false, default: "" },
-  notes: {
-    data: Buffer, // for binary PDF/doc files
-    contentType: String, // e.g. 'application/pdf'
-    filename: String
-  }, // filename or file url
+  // notes: {
+  //   data: Buffer, // for binary PDF/doc files
+  //   contentType: String, // e.g. 'application/pdf'
+  //   filename: String
+  // }, // filename or file url
+  notes: [
+    {
+      data: Buffer,
+      contentType: String,
+      filename: String,
+      uploadedAt: { type: Date, default: Date.now }
+    }
+  ],
   createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'RegisterRequest' },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date },

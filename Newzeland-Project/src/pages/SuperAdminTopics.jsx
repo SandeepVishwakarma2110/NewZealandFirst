@@ -18,7 +18,7 @@ export default function SuperAdminTopics() {
     title: "",
     key: "",
     background: "",
-    notes: null,
+    notes: [],
   });
 
   const [darkMode, setDarkMode] = useState(false);
@@ -148,7 +148,7 @@ export default function SuperAdminTopics() {
     await fetchTopics();
     setSelected(null);
     setSelectedMeta(null);
-    setForm({ title: "", key: "", background: "", notes: null });
+    setForm({ title: "", key: "", background: "", notes: [] });
   };
 
   const handleSelect = async (topic) => {
@@ -160,7 +160,7 @@ export default function SuperAdminTopics() {
       title: topic.title,
       key: topic.key,
       background: topic.background,
-      notes: null,
+      notes: [],
     });
 
     // Fetch metadata (views, updatedBy, updatedAt)
@@ -176,32 +176,49 @@ export default function SuperAdminTopics() {
     }
   };
 
-  // ---------------- DELETE ----------------
-  const handleDelete = async (id) => {
-    await fetch(`/api/topics/${id}`, {
-      method: "DELETE",
-      headers: { Authorization: `Bearer ${token}` },
-    });
 
-    await refreshTopics();
-    setActiveSection("view");
+
+  // ---------------- DELETE Topic----------------
+  const handleDelete = async (id) => {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this topic?"
+    );
+
+    if (!confirmed) return;
+
+    try {
+      const res = await fetch(`/api/topics/${id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to delete topic");
+      }
+
+      await refreshTopics();
+      setSelected(null);
+      setActiveSection("view");
+    } catch (err) {
+      console.error(err);
+      alert("Error deleting topic");
+    }
   };
 
   // ---------------- EDIT ----------------
   const handleEdit = async () => {
-
     setEditStatus("updating");
+
     const formData = new FormData();
     formData.append("title", form.title);
     formData.append("key", form.key);
     formData.append("background", form.background);
-    if (form.notes) formData.append("notes", form.notes);
 
-    // await fetch(`/api/topics/${selected._id}`, {
-    //   method: "PUT",
-    //   headers: { Authorization: `Bearer ${token}` },
-    //   body: formData,
-    // });
+    if (form.notes && form.notes.length > 0) {
+      form.notes.forEach(file => {
+        formData.append("notes", file);
+      });
+    }
 
     try {
       const res = await fetch(`/api/topics/${selected._id}`, {
@@ -209,61 +226,75 @@ export default function SuperAdminTopics() {
         headers: { Authorization: `Bearer ${token}` },
         body: formData,
       });
+
       const data = await res.json();
-      if (res.ok) {
-        setEditStatus(data.message || "Topic updated");
-        setShowAddPopup(true);
-        await refreshTopics();
-        setActiveSection("view");
-        setTimeout(() => {
-          setEditStatus("");
-          setShowAddPopup(false);
-        }, 400);
-      } else {
-        setEditStatus(data.message || "Error updating topic");
-        setShowAddPopup(true);
-        setTimeout(() => {
-          setEditStatus("");
-          setShowAddPopup(false);
-        }, 400);
+
+      if (!res.ok) {
+        throw new Error(data.message || "Error updating topic");
       }
+
+      // ✅ SINGLE SOURCE OF TRUTH
+      setSelected(data.topic);
+
+      setForm({
+        title: data.topic.title,
+        key: data.topic.key,
+        background: data.topic.background,
+        notes: []
+      });
+
+      // ✅ refresh list ONLY (do NOT reselect)
+      await refreshTopics();
+
+      setEditStatus("Topic updated");
+      setShowAddPopup(true);
+      setActiveSection("view");
+
+      setTimeout(() => {
+        setEditStatus("");
+        setShowAddPopup(false);
+      }, 200);
+
     } catch (err) {
+      console.error(err);
       setEditStatus("Error updating topic");
       setShowAddPopup(true);
+
       setTimeout(() => {
         setEditStatus("");
         setShowAddPopup(false);
       }, 400);
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // Don’t reset everything
-    await fetchTopics();
-
-    // Find updated topic
-    const updatedTopic = topics.find(t => t._id === selected._id);
-
-    if (updatedTopic) {
-      await handleSelect(updatedTopic);   // Keep selected active
-    }
-
-    setActiveSection("view");
   };
 
 
+  const handleDeleteNote = async (index) => {
+    if (!window.confirm("Delete this document?")) return;
+
+    try {
+      const res = await fetch(
+        `/api/topics/${selected._id}/notes/${index}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+
+      const data = await res.json();
+
+      if (res.ok) {
+        setEditStatus(data.message);
+        setSelected(prev => ({
+          ...prev,
+          notes: data.notes
+        }));
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   useEffect(() => {
     if (editStatus !== "updating") return;
@@ -284,7 +315,12 @@ export default function SuperAdminTopics() {
     formData.append("title", form.title);
     formData.append("key", form.key);
     formData.append("background", form.background);
-    if (form.notes) formData.append("notes", form.notes);
+    
+    if (form.notes && form.notes.length > 0) {
+      form.notes.forEach(file => {
+        formData.append("notes", file);
+      });
+    }
 
     try {
       const res = await fetch("/api/topics", {
@@ -308,7 +344,7 @@ export default function SuperAdminTopics() {
         setTimeout(() => {
           setAddStatus("");
           setShowAddPopup(false);
-        }, 400);
+        }, 200);
       }
     } catch (err) {
       setAddStatus("Error adding topic");
@@ -876,22 +912,78 @@ export default function SuperAdminTopics() {
                   </div>
                 )}
 
+                
                 {activeTab === "notes" && (
                   <div>
-                    <h3 className="text-lg font-semibold mb-4 text-white">Notes & Resources</h3>
-                    {selected.notes && selected.notes.filename ? (
-                      selected.notes.filename.toLowerCase().endsWith(".pdf") ? (
-                        <iframe src={`/api/topics/${selected._id}/notes`} width="100%" height="500" title="PDF Viewer" />
-                      ) : selected.notes.filename.match(/\.(docx?|pptx?|xlsx?)$/i) ? (
-                        <iframe src={`https://docs.google.com/gview?url=${window.location.origin}/api/topics/${selected._id}/notes&embedded=true`} width="100%" height="500" title="Doc Viewer" />
-                      ) : (
-                        <a href={`/api/topics/${selected._id}/notes`} target="_blank" rel="noopener noreferrer">Open Document</a>
-                      )
+                    <h3 className="text-lg font-semibold mb-4 text-white">
+                      Notes & Resources
+                    </h3>
+
+                    {selected.notes && selected.notes.length > 0 ? (
+                      <div className="space-y-6">
+                        {selected.notes.map((file, index) => {
+                          const isPdf = file.filename.toLowerCase().endsWith(".pdf");
+                          const isImage = file.contentType.startsWith("image/");
+                          const isOfficeDoc = file.filename.match(/\.(docx?|pptx?|xlsx?)$/i);
+
+                          return (
+                            <div
+                              key={index}
+                              className="bg-gray-600 p-4 rounded shadow"
+                            >
+                              <div className="flex justify-between items-center mb-2">
+                                <span className="text-white font-semibold">
+                                  📎 {file.filename}
+                                </span>
+
+                                <a
+                                  href={`/api/topics/${selected._id}/notes/${index}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-blue-400 underline"
+                                >
+                                  Open
+                                </a>
+                              </div>
+
+                              {/* Preview Section */}
+                              {isPdf && (
+                                <iframe
+                                  src={`/api/topics/${selected._id}/notes/${index}`}
+                                  width="100%"
+                                  height="400"
+                                  title={file.filename}
+                                  className="rounded"
+                                />
+                              )}
+
+                              {isImage && (
+                                <img
+                                  src={`/api/topics/${selected._id}/notes/${index}`}
+                                  alt={file.filename}
+                                  className="max-h-[400px] rounded border"
+                                />
+                              )}
+
+                              {isOfficeDoc && (
+                                <iframe
+                                  src={`https://docs.google.com/gview?url=${window.location.origin}/api/topics/${selected._id}/notes/${index}&embedded=true`}
+                                  width="100%"
+                                  height="400"
+                                  title={file.filename}
+                                  className="rounded"
+                                />
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
                     ) : (
-                      <p className="text-gray-500">No notes uploaded.</p>
+                      <p className="text-gray-400">No notes uploaded.</p>
                     )}
                   </div>
                 )}
+
               </div>
             </>
           )}
@@ -992,40 +1084,36 @@ export default function SuperAdminTopics() {
                     <h3 className="font-semibold mb-2 text-white">Notes File</h3>
                     <input
                       type="file"
-                      onChange={(e) => setForm({ ...form, notes: e.target.files[0] })}
+                      multiple
+                      accept=".pdf,image/*"
+                      onChange={(e) =>
+                        setForm({ ...form, notes: Array.from(e.target.files) })
+                      }
                       className="w-full border p-2 rounded bg-blue-200 min-h-[250px] text-gray-700"
                     />
+
                   </div>
                 )}
               </div>
 
-
-
               <div className="mt-6 flex items-center gap-4">
-                {/* <button
+                <button
                   onClick={handleAdd}
-                  className="bg-orange-700 text-white px-4 py-2 rounded"
                   disabled={addStatus === "adding"}
-                >
-                  {addStatus === "adding" ? `Topic adding${dots}` : "Add Topic"}
-                </button> */}
-                 <button
-                    onClick={handleAdd}
-                    disabled={addStatus === "adding"}
-                    className="bg-orange-700 text-white px-5 py-2 rounded w-40 text-left
+                  className="bg-orange-700 text-white px-5 py-2 rounded w-40 text-left
              transform transition duration-200 active:scale-95"
-                  >
-                    {addStatus === "adding" ? (
-                      <span className="inline-flex items-center">
-                        Topic adding
-                        <span className="dots ml-1 w-[1.5em] inline-block text-left">
-                          {dots}
-                        </span>
+                >
+                  {addStatus === "adding" ? (
+                    <span className="inline-flex items-center">
+                      Topic adding
+                      <span className="dots ml-1 w-[1.5em] inline-block text-left">
+                        {dots}
                       </span>
-                    ) : (
-                      " Add Topic"
-                    )}
-                  </button>
+                    </span>
+                  ) : (
+                    " Add Topic"
+                  )}
+                </button>
 
                 {/* Popup for add status */}
                 {showAddPopup && addStatus && addStatus !== "adding" && (
@@ -1129,35 +1217,72 @@ export default function SuperAdminTopics() {
 
                 {formTab === "notes" && (
                   <div>
-                    <h3 className="font-semibold mb-2 text-white">Notes File</h3>
-                    <input
-                      type="file"
-                      onChange={(e) => setForm({ ...form, notes: e.target.files[0] })}
-                      className="w-full border p-2 rounded min-h-[250px] bg-blue-200 text-gray-700"
-                    />
-                    {selected?.notes && selected.notes.filename && (
-                      <div className="mt-2 text-sm flex items-center gap-2">
-                        <span className="text-gray-300">Current: {selected.notes.filename}</span>
-                        <a
-                          href={`/api/topics/${selected._id}/notes`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-blue-400 underline ml-2"
-                        >
-                          View
-                        </a>
+                    <h3 className="font-semibold mb-4 text-white">
+                      Notes & Resources
+                    </h3>
+
+                    {/* Existing Documents */}
+                    {selected?.notes?.length > 0 ? (
+                      <div className="space-y-3 mb-6">
+                        {selected.notes.map((file, index) => (
+                          <div
+                            key={index}
+                            className="flex items-center justify-between bg-gray-600 p-3 rounded"
+                          >
+                            <span className="text-white truncate">
+                              📎 {file.filename}
+                            </span>
+
+                            <div className="flex gap-3">
+                              <a
+                                href={`/api/topics/${selected._id}/notes/${index}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-blue-400 underline"
+                              >
+                                View
+                              </a>
+
+                              <button
+                                onClick={() => handleDeleteNote(index)}
+                                className="text-red-400 hover:text-red-600"
+                              >
+                                Delete
+                              </button>
+                            </div>
+                          </div>
+                        ))}
                       </div>
+                    ) : (
+                      <p className="text-gray-400 mb-6">
+                        No documents uploaded.
+                      </p>
                     )}
+
+                    {/* Add New Documents */}
+                    <div>
+                      <h4 className="text-white font-semibold mb-2">
+                        Add New Documents
+                      </h4>
+                      <input
+                        type="file"
+                        multiple
+                        onChange={(e) =>
+                          setForm({ ...form, notes: Array.from(e.target.files) })
+                        }
+                        className="w-full border p-2 rounded bg-blue-200 text-gray-700"
+                      />
+                    </div>
                   </div>
                 )}
+
               </div>
 
 
 
 
               <div className="mt-6 flex gap-4">
-                {/* <button onClick={handleEdit} className="bg-yellow-400 text-black px-4 py-2 rounded transform transition duration-200 active:scale-95">Update Topic</button> */}
-                
+
                 <div className="mt-6 flex items-center gap-4 ">
                   <button
                     onClick={handleEdit}

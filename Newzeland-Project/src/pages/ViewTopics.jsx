@@ -257,29 +257,7 @@ export default function ViewTopics() {
 
 
 
-  // ---------------------------------------------------
-  // Export PDF / Email / Print
-  // ---------------------------------------------------
-  // const exportPDF = async () => {
-  //   if (!selected) return;
-
-  //   const canvas = await html2canvas(pdfRef.current, { scale: 2 });
-  //   const imgData = canvas.toDataURL("image/png");
-  //   const pdf = new jsPDF("p", "mm", "a4");
-
-  //   const width = pdf.internal.pageSize.getWidth();
-  //   const height = (canvas.height * width) / canvas.width;
-
-  //   pdf.addImage(imgData, "PNG", 0, 0, width, height);
-  //   pdf.save(`${selected.title}.pdf`);
-  // };
-
-  // const emailTopic = () => {
-  //   if (!selected) return;
-  //   window.location.href = `mailto:?subject=${encodeURIComponent(
-  //     selected.title
-  //   )}&body=${encodeURIComponent(selected.background)}`;
-  // };
+ 
   const emailTopic = () => {
     if (!selected) return;
     const subject = encodeURIComponent(`Topic:${selected.title} || "Topic"`);
@@ -421,32 +399,7 @@ export default function ViewTopics() {
               </button>
             </div>
 
-            {/* <div className="flex-1 overflow-y-auto">
-              <div className="text-sm text-gray-500 mb-2">Pinned Topics</div>
-              <ul className="space-y-1 mb-6">
-                {filteredTopics.slice(0, 5).map((topic) => (
-                  <li
-                    key={topic._id}
-                    onClick={() => handleSelect(topic)}
-                    className={`cursor-pointer p-2 rounded ${selected?._id === topic._id ? "bg-blue-300 border-l-4 border-blue-500" : "hover:bg-blue-200"}`}
-                  >
-                    {topic.title}
-                  </li>
-                ))}
-              </ul>
-              <div className="text-sm text-gray-500 mb-2">All Topics</div>
-              <ul className="space-y-1">
-                {filteredTopics.map((topic) => (
-                  <li
-                    key={topic._id}
-                    onClick={() => handleSelect(topic)}
-                    className={`cursor-pointer p-2 rounded ${selected?._id === topic._id ? "bg-blue-300 border-l-4 border-blue-500" : "hover:bg-blue-200"}`}
-                  >
-                    {topic.title}
-                  </li>
-                ))}
-              </ul>
-            </div> */}
+
             <div className="flex-1 overflow-y-auto">
 
               {/* ================= PINNED TOPICS ================= */}
@@ -463,8 +416,8 @@ export default function ViewTopics() {
                       key={topic._id}
                       onClick={() => handleSelect(topic)}
                       className={`cursor-pointer p-2 rounded flex items-center justify-between ${selected?._id === topic._id
-                          ? "bg-blue-300 border-l-4 border-blue-500"
-                          : "hover:bg-blue-200"
+                        ? "bg-blue-300 border-l-4 border-blue-500"
+                        : "hover:bg-blue-200"
                         }`}
                     >
                       <span className="flex items-center gap-2 font-medium">
@@ -505,8 +458,8 @@ export default function ViewTopics() {
                       key={topic._id}
                       onClick={() => handleSelect(topic)}
                       className={`cursor-pointer p-2 rounded flex items-center justify-between ${selected?._id === topic._id
-                          ? "bg-blue-300 border-l-4 border-blue-500"
-                          : "hover:bg-blue-200"
+                        ? "bg-blue-300 border-l-4 border-blue-500"
+                        : "hover:bg-blue-200"
                         }`}
                     >
                       <span className="flex items-center gap-2">
@@ -521,8 +474,8 @@ export default function ViewTopics() {
                         }}
                         title={isPinned ? "Unpin" : "Pin"}
                         className={`ml-2 transition transform active:scale-95 ${isPinned
-                            ? "text-yellow-500 hover:text-yellow-600"
-                            : "text-gray-400 hover:text-yellow-500"
+                          ? "text-yellow-500 hover:text-yellow-600"
+                          : "text-gray-400 hover:text-yellow-500"
                           }`}
                       >
                         {isPinned ? (
@@ -593,16 +546,6 @@ export default function ViewTopics() {
                 <h1 className="text-3xl font-bold">{selected.title}</h1>
 
                 <div className="flex gap-3 mt-4 lg:mt-0 ">
-                  {/* <button
-                    onClick={exportPDF}
-                    className="bg-blue-600 px-3 py-1 rounded text-white flex flex-row items-center transform transition duration-100 active:scale-97"
-                  >
-                    <svg width="22" height="22" fill="currentColor">
-                      <path d="M11 2l4 4h-3v6h-2V6H7l4-4zm-7 12h2v4h10v-4h2v6H4v-6z" />
-                    </svg>
-
-                    Export
-                  </button> */}
                   <button
                     onClick={emailTopic}
                     className="bg-yellow-700 px-3 py-1 rounded text-white flex flex-row items-center transform transition duration-100 active:scale-97"
@@ -719,24 +662,67 @@ export default function ViewTopics() {
                 )}
 
                 {selected.tab === "notes" && (
-                  <div>
-                    {selected.notes && selected.notes.filename ? (
-                      selected.notes.filename.toLowerCase().endsWith(".pdf") ? (
-                        <iframe
-                          src={`/api/topics/${selected._id}/notes`}
-                          className="w-full h-[500px]"
-                        ></iframe>
-                      ) : (
-                        <iframe
-                          src={`https://docs.google.com/gview?url=${window.location.origin}/api/topics/${selected._id}/notes&embedded=true`}
-                          className="w-full h-[500px]"
-                        ></iframe>
-                      )
+                  <div className="space-y-6">
+                    {selected.notes && selected.notes.length > 0 ? (
+                      selected.notes.map((file, index) => {
+                        const isPdf = file.filename.toLowerCase().endsWith(".pdf");
+                        const isImage = file.contentType?.startsWith("image/");
+                        const isOfficeDoc = file.filename.match(/\.(docx?|pptx?|xlsx?)$/i);
+
+                        return (
+                          <div
+                            key={index}
+                            className="bg-gray-100 p-4 rounded shadow"
+                          >
+                            {/* File Header */}
+                            <div className="flex justify-between items-center mb-3">
+                              <span className="font-semibold text-gray-800">
+                                📎 {file.filename}
+                              </span>
+
+                              <a
+                                href={`/api/topics/${selected._id}/notes/${index}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-blue-600 underline"
+                              >
+                                Open
+                              </a>
+                            </div>
+
+                            {/* Preview */}
+                            {isPdf && (
+                              <iframe
+                                src={`/api/topics/${selected._id}/notes/${index}`}
+                                className="w-full h-[500px] rounded"
+                                title={file.filename}
+                              />
+                            )}
+
+                            {isImage && (
+                              <img
+                                src={`/api/topics/${selected._id}/notes/${index}`}
+                                alt={file.filename}
+                                className="max-h-[500px] rounded border"
+                              />
+                            )}
+
+                            {isOfficeDoc && (
+                              <iframe
+                                src={`https://docs.google.com/gview?url=${window.location.origin}/api/topics/${selected._id}/notes/${index}&embedded=true`}
+                                className="w-full h-[500px] rounded"
+                                title={file.filename}
+                              />
+                            )}
+                          </div>
+                        );
+                      })
                     ) : (
                       <p className="text-gray-400">No notes available.</p>
                     )}
                   </div>
                 )}
+
               </div>
 
               {/* ---------------------------------------------------
