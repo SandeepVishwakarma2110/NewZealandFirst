@@ -649,7 +649,7 @@ export default function ViewTopics() {
                 )} */}
 
                 {selected.tab === "background" && (
-                  <div className="whitespace-pre-line text-gray-900">
+                  <div className="whitespace-pre-line ">
                     <Linkify
                       options={{
                         target: "_blank",

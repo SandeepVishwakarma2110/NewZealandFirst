@@ -762,7 +762,7 @@ export default function SuperAdminTopics() {
                   <div className="max-w-6xl mx-auto px-4 pt-4 flex justify-end ">
                     <button
                       onClick={() => setDarkMode(!darkMode)}
-                      className="flex items-center gap-2 px-4 py-2 rounded-full    border  
+                      className="flex items-center gap-2 px-4 py-2 rounded-full border
                        hover:bg-gray-400 dark:hover:bg-gray-700 transition"
                     >
                       {darkMode ? <Sun size={18} /> : <Moon size={18} />}
